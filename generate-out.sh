@@ -19,15 +19,15 @@
 
 #Linux
 
-CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o out/linux-arm64/epos-open-source -ldflags="-extldflags=-static" # linux, arm64 arch
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o out/linux-amd64/epos-open-source -ldflags="-extldflags=-static" # linux, amd64 arch
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o out/linux-arm64/epos-linux-arm64 -ldflags="-extldflags=-static" # linux, arm64 arch
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o out/linux-amd64/epos-linux-amd64 -ldflags="-extldflags=-static" # linux, amd64 arch
 
 #MacOS
 
-CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o out/darwin-arm64/epos-open-source -ldflags="-extldflags=-static" # mac, arm64 arch
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o out/darwin-amd64/epos-open-source -ldflags="-extldflags=-static" # mac, amd64 arch
+CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o out/darwin-arm64/epos-darwin-arm64 -ldflags="-extldflags=-static" # mac, arm64 arch
+CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o out/darwin-amd64/epos-darwin-amd64 -ldflags="-extldflags=-static" # mac, amd64 arch
 
 #Windows
 
-CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o out/windows-arm64/epos-open-source -ldflags="-extldflags=-static" # mac, arm64 arch
-CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o out/windows-amd64/epos-open-source -ldflags="-extldflags=-static" # windows, amd64 arch
+CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -o out/windows-arm64/epos-windows-arm64 -ldflags="-extldflags=-static" # mac, arm64 arch
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o out/windows-amd64/epos-windows-amd64 -ldflags="-extldflags=-static" # windows, amd64 arch

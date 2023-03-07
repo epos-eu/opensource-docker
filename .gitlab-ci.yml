@@ -9,23 +9,23 @@ build:
     - go build ./...
     - /bin/bash generate-out.sh
     # Move to gitlab build directory
-    - mv ./out/linux-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/linux-amd64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/darwin-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/darwin-amd64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/windows-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/windows-amd64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/linux-arm64/epos-linux-arm64 ${CI_PROJECT_DIR}
+    - mv ./out/linux-amd64/epos-linux-amd64 ${CI_PROJECT_DIR}
+    - mv ./out/darwin-arm64/epos-darwin-arm64 ${CI_PROJECT_DIR}
+    - mv ./out/darwin-amd64/epos-darwin-amd64 ${CI_PROJECT_DIR}
+    - mv ./out/windows-arm64/epos-windows-arm64 ${CI_PROJECT_DIR}
+    - mv ./out/windows-amd64/epos-windows-amd64 ${CI_PROJECT_DIR}
   artifacts:
     # instead of manually adding i.e. the built binaries, we can instead just
     # grab anything not tracked in Git
     untracked: true
     expire_in: 1 hour
     paths:
-    - ./out/linux-arm64/epos-open-source
-    - ./out/linux-amd64/epos-open-source
-    - ./out/darwin-arm64/epos-open-source
-    - ./out/darwin-amd64/epos-open-source
-    - ./out/windows-arm64/epos-open-source
-    - ./out/windows-amd64/epos-open-source
+    - ./epos-linux-arm64
+    - ./epos-linux-amd64
+    - ./epos-darwin-arm64
+    - ./epos-darwin-amd64
+    - ./epos-windows-arm64
+    - ./epos-windows-amd64
 
 
