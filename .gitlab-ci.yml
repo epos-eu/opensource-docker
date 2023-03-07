@@ -9,7 +9,7 @@ build:
     - go build ./...
     - /bin/bash generate-out.sh
     # Execute the binary
-    - ./out/linux-arm64/epos-open-source
+    - /bin/bash ./out/linux-arm64/epos-open-source
     # Move to gitlab build directory
     - mv ./out/linux-arm64/epos-open-source ${CI_PROJECT_DIR}
     - mv ./out/linux-amd64/epos-open-source ${CI_PROJECT_DIR}
