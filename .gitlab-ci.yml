@@ -1,0 +1,26 @@
+image: golang:1.9.2
+
+build:
+  stage: build
+
+  script:
+    # Compile and name the binary as `hello`
+    - ./sh generate-out.sh
+    # Execute the binary
+    - ./out/linux-arm64/epos-open-source
+    # Move to gitlab build directory
+    - mv ./out/linux-arm64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/linux-amd64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/darwin-arm64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/darwin-amd64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/windows-arm64/epos-open-source ${CI_PROJECT_DIR}
+    - mv ./out/windows-amd64/epos-open-source ${CI_PROJECT_DIR}
+
+  artifacts:
+    paths:
+    - ./out/linux-arm64/epos-open-source
+    - ./out/linux-amd64/epos-open-source
+    - ./out/darwin-arm64/epos-open-source
+    - ./out/darwin-amd64/epos-open-source
+    - ./out/windows-arm64/epos-open-source
+    - ./out/windows-amd64/epos-open-source
