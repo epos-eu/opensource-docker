@@ -17,34 +17,34 @@
 version: '3.7'
 
 services:
-  gui:
-    image: "${DOCKER_REGISTRY}${GUI_IMAGE}"
-    container_name: gui
-    ports:
-      - "${GUI_PORT}:80"
-    environment:
-      - API_HOST="${API_HOST}"
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq/
-    networks:
-      - epos_network
-    depends_on:
-      - gateway
-  backofficegui:
-    image: "${DOCKER_REGISTRY}${BACKOFFICE_GUI_IMAGE}"
-    container_name: backoffice-gui
-    ports:
-      - "${BACKOFFICE_GUI_PORT}:80"
-    environment:
-      - API_HOST="${API_HOST}"
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq/
-    networks:
-      - epos_network
-    depends_on:
-      - gateway
+  #gui:
+  #  image: "${DOCKER_REGISTRY}/${GUI_IMAGE}"
+  #  container_name: gui
+  #  ports:
+  #    - "${GUI_PORT}:80"
+  #  environment:
+  #    - API_HOST="${API_HOST}"
+  #  volumes:
+  #    - rabbitmq:/var/lib/rabbitmq/
+  #  networks:
+  #    - epos_network
+  #  depends_on:
+  #    - gateway
+  #backofficegui:
+  #  image: "${DOCKER_REGISTRY}/${BACKOFFICE_GUI_IMAGE}"
+  #  container_name: backoffice-gui
+  #  ports:
+  #    - "${BACKOFFICE_GUI_PORT}:80"
+  #  environment:
+  #    - API_HOST="${API_HOST}"
+  #  volumes:
+  #    - rabbitmq:/var/lib/rabbitmq/
+  #  networks:
+  #    - epos_network
+  #  depends_on:
+  #    - gateway
   gateway:
-    image: "${DOCKER_REGISTRY}${GATEWAY_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${GATEWAY_IMAGE}"
     container_name: gateway
     ports:
       - "${API_PORT}:5000"
@@ -73,7 +73,7 @@ services:
     networks:
       - epos_network
   resources:
-    image: "${DOCKER_REGISTRY}${RESOURCES_SERVICE_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${RESOURCES_SERVICE_IMAGE}"
     container_name: resources-service
     volumes:
       - resources:/resources
@@ -90,7 +90,7 @@ services:
     depends_on:
       - rabbitmq
   backoffice:
-    image: "${DOCKER_REGISTRY}${BACKOFFICE_SERVICE_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${BACKOFFICE_SERVICE_IMAGE}"
     container_name: backoffice-service
     volumes:
       - backoffice:/backoffice
@@ -108,7 +108,7 @@ services:
     depends_on:
       - rabbitmq
   ingestor:
-    image: "${DOCKER_REGISTRY}${INGESTOR_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${INGESTOR_IMAGE}"
     container_name: ingestor-service
     volumes:
       - ingestor:/ingestor
@@ -131,7 +131,7 @@ services:
     depends_on:
       - rabbitmq
   externalaccess:
-    image: "${DOCKER_REGISTRY}${EXTERNAL_ACCESS_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${EXTERNAL_ACCESS_IMAGE}"
     container_name: external-access-service
     volumes:
       - externalaccess:/externalaccess
@@ -147,7 +147,7 @@ services:
     depends_on:
       - rabbitmq
   converter:
-    image: "${DOCKER_REGISTRY}${CONVERTER_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${CONVERTER_IMAGE}"
     container_name: converter-service
     volumes:
       - converter:/converter
@@ -163,7 +163,7 @@ services:
     depends_on:
       - rabbitmq
   processingaccessservice:
-    image: "${DOCKER_REGISTRY}${PROCESSING_ACCESS_SERVICE_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${PROCESSING_ACCESS_SERVICE_IMAGE}"
     container_name: processing-access-service
     volumes:
       - processingaccessservice:/processingaccessservice
@@ -185,7 +185,7 @@ services:
     depends_on:
       - rabbitmq
   datametadataservice:
-    image: "${DOCKER_REGISTRY}${DATA_METADATA_SERVICE_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${DATA_METADATA_SERVICE_IMAGE}"
     container_name: datametadataservice
     volumes:
       - datametadataservice:/datametadataservice
@@ -218,7 +218,7 @@ services:
       - rabbitmq
   postgrescerif:
     restart: always
-    image: "${DOCKER_REGISTRY}${METADATA_DB_IMAGE}"
+    image: "${DOCKER_REGISTRY}/${METADATA_DB_IMAGE}"
     container_name: postgrescerif
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
