@@ -1,26 +1,72 @@
-image: golang:1.9.2
+image: golang:1.17
+
+stages:
+  - build
+
+format:
+  stage: build
+  script:
+    - test -z "$(gofmt -l ./)"
+
+vet:
+  stage: build
+  script:
+    - go vet -json ./... | tee vet-report.json
+  artifacts:
+    when: always
+    paths:
+      - vet-report.json
+    expire_in: 1 hour
+
+test:
+  stage: build
+  script:
+    - go test -coverprofile=coverage.out -json ./... | tee test-report.json
+  artifacts:
+    when: always
+    paths:
+      - test-report.json
+      - coverage.out
+    expire_in: 1 hour
+
+staticcheck:
+  stage: build
+  script:
+    - go install honnef.co/go/tools/cmd/staticcheck@latest # ideally we should version pin
+    - staticcheck ./...
+
+golint:
+  stage: build
+  script:
+    - go install golang.org/x/lint/golint@latest # ideally we should version pin
+    - golint -set_exit_status ./...
 
 build:
   stage: build
-
   script:
-    # Compile and name the binary as `hello`
-    - /bin/bash generate-out.sh
-    # Execute the binary
-    - ./out/linux-arm64/epos-open-source
-    # Move to gitlab build directory
-    - mv ./out/linux-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/linux-amd64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/darwin-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/darwin-amd64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/windows-arm64/epos-open-source ${CI_PROJECT_DIR}
-    - mv ./out/windows-amd64/epos-open-source ${CI_PROJECT_DIR}
-
+    - go build ./...
   artifacts:
+    # instead of manually adding i.e. the built binaries, we can instead just
+    # grab anything not tracked in Git
+    untracked: true
+    expire_in: 1 hour
+
+sonarcloud-check:
+  stage: build
+  needs:
+    - job: test
+      artifacts: true
+    - job: vet
+      artifacts: true
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
     paths:
-    - ./out/linux-arm64/epos-open-source
-    - ./out/linux-amd64/epos-open-source
-    - ./out/darwin-arm64/epos-open-source
-    - ./out/darwin-amd64/epos-open-source
-    - ./out/windows-arm64/epos-open-source
-    - ./out/windows-amd64/epos-open-source
+      - .sonar/cache
+  script:
+    - sonar-scanner
