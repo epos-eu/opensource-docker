@@ -5,7 +5,7 @@ build:
 
   script:
     # Compile and name the binary as `hello`
-    - ./sh generate-out.sh
+    - /bin/bash generate-out.sh
     # Execute the binary
     - ./out/linux-arm64/epos-open-source
     # Move to gitlab build directory
