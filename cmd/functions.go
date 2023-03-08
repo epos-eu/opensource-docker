@@ -65,7 +65,7 @@ func print_urls() {
     fmt.Print("--------------------------------------------------------\n")
     fmt.Print("EPOS Backoffice: http://"+os.Getenv("LOCAL_IP")+":"+os.Getenv("BACKOFFICE_GUI_PORT")+os.Getenv("DEPLOY_PATH")+"\n")
     fmt.Print("--------------------------------------------------------\n")
-    fmt.Print("EPOS API Gateway: http://"+os.Getenv("LOCAL_IP")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+os.Getenv("API_PATH")+"\n")
+    fmt.Print("EPOS API Gateway: http://"+os.Getenv("LOCAL_IP")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+os.Getenv("API_PATH")+"/ui/\n")
     fmt.Print("--------------------------------------------------------\n")
     fmt.Print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
 }
