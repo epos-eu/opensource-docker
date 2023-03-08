@@ -70,6 +70,6 @@ var deleteCmd = & cobra.Command {
 }
 
 func init() {
-    deleteCmd.Flags().String("env", "", "--env 1")
-    deleteCmd.Flags().String("dockercompose", "", "--dockercompose 1")
+    deleteCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
+    deleteCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
 }

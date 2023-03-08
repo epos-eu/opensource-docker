@@ -100,6 +100,6 @@ var deployCmd = & cobra.Command {
 }
 
 func init() {
-    deployCmd.Flags().String("env", "", "--env 1")
-    deployCmd.Flags().String("dockercompose", "", "--dockercompose 1")
+    deployCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
+    deployCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
 }
