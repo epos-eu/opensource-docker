@@ -94,6 +94,24 @@ var deployCmd = & cobra.Command {
 
         time.Sleep(20 * time.Second)
 
+        cmd.Printf("Restart gateway...\n")
+        command = exec.Command("docker-compose",
+            "-f",
+            dockercomposefile,
+            "--env-file=" + env,
+            "restart",
+            "gateway")
+        cmd.Printf(command.String())
+        command.Stdout = os.Stdout
+        command.Stderr = os.Stderr
+        if err := command.Run();
+        err != nil {
+            log.Fatal("Error creating containers...\n")
+            log.Fatal(err)
+        }
+
+        time.Sleep(5 * time.Second)
+
         print_urls()
 
     },

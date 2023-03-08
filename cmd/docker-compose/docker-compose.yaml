@@ -56,8 +56,8 @@ services:
       - LOAD_RESOURCES_API=true
       - LOAD_INGESTOR_API=true
       - LOAD_EXTERNAL_ACCESS_API=true
-      - LOAD_BACKOFFICE_API=false
-      - LOAD_PROCESSING_HOST=false
+      - LOAD_BACKOFFICE_API=true
+      - LOAD_PROCESSING_API=true
     depends_on:
       - rabbitmq
       - resources
@@ -93,6 +93,12 @@ services:
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
       - FACETS_DEFAULT=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   backoffice:
@@ -111,6 +117,12 @@ services:
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
       - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
       - BASECONTEXT=${BASE_CONTEXT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   ingestor:
@@ -134,6 +146,12 @@ services:
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - INGESTOR_HASH=3F58A1895982CC81A2E5CEDA7DD9AC7009DF9998
       - BASECONTEXT=${BASE_CONTEXT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   externalaccess:
@@ -150,6 +168,12 @@ services:
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   converter:
@@ -166,6 +190,12 @@ services:
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - REPOTOKEN_DEFAULT=${REPOTOKEN_DEFAULT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   processingaccessservice:
@@ -188,6 +218,12 @@ services:
       - POSTGRESQL_USERNAME=${POSTGRES_USER}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - SWIRRL_BASE_PATH=${SWIRRL_BASE_PATH}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   datametadataservice:
@@ -220,6 +256,12 @@ services:
       - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - rabbitmq
   postgrescerif:
