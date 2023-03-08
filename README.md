@@ -154,8 +154,8 @@ Usage:
   epos-<os>-<architecture> deploy [flags]
 
 Flags:
-      --dockercompose string   --dockercompose 1
-      --env string             --env 1
+      --dockercompose string   Docker compose file, use default if not provided
+      --env string             Environment variable file, use default if not provided
   -h, --help                   help for deploy
 ```
 
@@ -168,8 +168,8 @@ Usage:
   epos-<os>-<architecture> delete [flags]
 
 Flags:
-      --dockercompose string   --dockercompose 1
-      --env string             --env 1
+      --dockercompose string   Docker compose file, use default if not provided
+      --env string             Environment variable file, use default if not provided
   -h, --help                   help for delete
 ```
 
@@ -186,8 +186,9 @@ Usage:
   epos-<os>-<architecture> populate [flags]
 
 Flags:
-      --file string   file or folder
-  -h, --help          help for populate
+      --env string      Environment variable file
+      --folder string   Folder where ttl files are located
+  -h, --help            help for populate
 ```
 
 ### Manual option
