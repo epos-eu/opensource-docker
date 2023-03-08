@@ -129,7 +129,7 @@ The `<command>` field value is one of the following listed below:
 EPOS Open Source CLI installer to deploy the EPOS System using docker-compose
 
 Usage:
-  [command] [command]
+  epos-<os>-<architecture> [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -142,7 +142,7 @@ Available Commands:
 Flags:
   -h, --help   help for [command]
 
-Use "[command] [command] --help" for more information about a command.
+Use "epos-<os>-<architecture> [command] --help" for more information about a command.
 ```
 
 ## Deploy a new environment
@@ -151,7 +151,7 @@ Use "[command] [command] --help" for more information about a command.
 Deploy an enviroment with .env set up on docker
 
 Usage:
-  [command] deploy [flags]
+  epos-<os>-<architecture> deploy [flags]
 
 Flags:
       --dockercompose string   --dockercompose 1
@@ -165,7 +165,7 @@ Flags:
 Delete an enviroment with .env set up on docker
 
 Usage:
-  [command] delete [flags]
+  epos-<os>-<architecture> delete [flags]
 
 Flags:
       --dockercompose string   --dockercompose 1
@@ -181,7 +181,7 @@ Automatic option: download or create TTL files according to EPOS-DCAT-AP and use
 Populate the existing environment with metadata information in a specific folder
 
 Usage:
-  [command] populate [flags]
+  epos-<os>-<architecture> populate [flags]
 
 Flags:
       --file string   file or folder
@@ -196,7 +196,7 @@ Manual option: use the API Gateway endpoint to manually ingest metadata TTL file
 Export configuration files for customization in output folder, options: [env, compose]
 
 Usage:
-  [command] export [flags]
+  epos-<os>-<architecture> export [flags]
 
 Flags:
       --file string     File to export, available options: [env, compose]
