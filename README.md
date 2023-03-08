@@ -213,17 +213,17 @@ Flags:
 
 EPOS Data Portal: 
 ```
-http://<your-ip>:<GUI_PORT>/
+http://<your-ip>:<GUI_PORT><DEPLOY_PATH>
 ```
 
 EPOS Backoffice: 
 ```
-http://<your-ip>:<BACKOFFICE_GUI_PORT>/
+http://<your-ip>:<BACKOFFICE_GUI_PORT><DEPLOY_PATH>
 ```
 
 EPOS API Gateway: 
 ```
-http://<your-ip>:<API_PORT>/
+http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 ```
 
 ## Contributing
