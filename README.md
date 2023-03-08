@@ -175,7 +175,9 @@ Flags:
 
 ## Populate the existing environment with metadata
 
-Automatic option: download or create TTL files according to EPOS-DCAT-AP and use the following command:
+### Automatic option: 
+
+Download or create TTL files according to EPOS-DCAT-AP and use the following command:
 
 ```
 Populate the existing environment with metadata information in a specific folder
@@ -188,7 +190,9 @@ Flags:
   -h, --help          help for populate
 ```
 
-Manual option: use the API Gateway endpoint to manually ingest metadata TTL files into the catalogue.
+### Manual option
+
+Use the API Gateway endpoint to manually ingest metadata TTL files into the catalogue.
 
 ## Export configuration file and docker-compose
 
