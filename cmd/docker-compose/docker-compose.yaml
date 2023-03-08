@@ -17,19 +17,19 @@
 version: '3.7'
 
 services:
-  #gui:
-  #  image: "${DOCKER_REGISTRY}/${GUI_IMAGE}"
-  #  container_name: gui
-  #  ports:
-  #    - "${GUI_PORT}:80"
-  #  environment:
-  #    - API_HOST="${API_HOST}"
-  #  volumes:
-  #    - rabbitmq:/var/lib/rabbitmq/
-  #  networks:
-  #    - epos_network
-  #  depends_on:
-  #    - gateway
+  gui:
+    image: "${DOCKER_REGISTRY}/${GUI_IMAGE}"
+    container_name: gui
+    ports:
+      - "${GUI_PORT}:80"
+    environment:
+      - API_HOST="${API_HOST}"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq/
+    networks:
+      - epos_network
+    depends_on:
+      - gateway
   #backofficegui:
   #  image: "${DOCKER_REGISTRY}/${BACKOFFICE_GUI_IMAGE}"
   #  container_name: backoffice-gui
@@ -58,6 +58,12 @@ services:
       - LOAD_EXTERNAL_ACCESS_API=true
       - LOAD_BACKOFFICE_API=false
       - LOAD_PROCESSING_HOST=false
+    depends_on:
+      - rabbitmq
+      - resources
+      - backoffice
+      - ingestor
+      - externalaccess
   rabbitmq:
     image: "${MESSAGE_BUS_IMAGE}"
     container_name: rabbitmq
