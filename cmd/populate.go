@@ -29,9 +29,9 @@ import (
 
 
 var populateCmd = & cobra.Command {
-    Use: "deploy",
-    Short: "Deploy an environment on docker",
-    Long: `Deploy an enviroment with .env set up on docker`,
+    Use: "populate",
+    Short: "Populate the existing environment with metadata information",
+    Long: `Populate the existing environment with metadata information in a specific folder`,
     Run: func(cmd * cobra.Command, args[] string) {
 
         path, _ := cmd.Flags().GetString("file")
@@ -51,12 +51,13 @@ var populateCmd = & cobra.Command {
                 return nil
             })
         } else {
-            // is not a directory
+            fmt.Printf("File Name: %s\n", fileInfo.Name())
         }
         print_urls()
     },
 }
 
 func init() {
-    deployCmd.Flags().String("file", "", "--file 1")
+    populateCmd.Flags().String("file", "", "file or folder")
+    populateCmd.MarkFlagRequired("file")
 }

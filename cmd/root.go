@@ -20,14 +20,26 @@ package cmd
 
 import (
     "os"
+    _ "embed"
 
     "github.com/spf13/cobra"
 )
 
+
+var (
+
+    //go:embed "docker-compose/docker-compose.yaml"
+    dockercompose []byte
+    
+    //go:embed "configurations/env.env"
+    configurations []byte
+    
+    )
+
 var rootCmd = & cobra.Command {
     Use: "[command]",
-    Short: "A CLI calculator",
-    Long: `A CLI calculator that can add and subtract two numbers.`,
+    Short: "EPOS Open Source CLI installer",
+    Long: `EPOS Open Source CLI installer to deploy the EPOS System using docker-compose`,
 }
 
 func Execute() {
@@ -41,4 +53,5 @@ func init() {
     rootCmd.AddCommand(deployCmd)
     rootCmd.AddCommand(deleteCmd)
     rootCmd.AddCommand(populateCmd)
+    rootCmd.AddCommand(exportCmd)
 }

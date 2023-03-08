@@ -19,7 +19,6 @@
 package cmd
 
 import (
-    _ "embed"
     "github.com/spf13/cobra"
 	"github.com/joho/godotenv"
     "os/exec"
@@ -28,15 +27,6 @@ import (
     "time"
 )
 
-var (
-
-//go:embed "docker-compose/docker-compose.yaml"
-dockercompose []byte
-
-//go:embed "configurations/env.env"
-configurations []byte
-
-)
 
 var deployCmd = & cobra.Command {
     Use: "deploy",

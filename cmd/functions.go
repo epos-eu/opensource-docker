@@ -90,3 +90,12 @@ func generateTempFile( text []byte ) string {
 
     return name
 }
+
+func generateFile( text []byte, filePath string ) {
+    err := ioutil.WriteFile(filePath, text, 0777)
+    if err != nil {
+        log.Fatal("Could not create file", err)
+    }
+
+    fmt.Println("Created file ", filePath)
+}
