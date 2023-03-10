@@ -32,10 +32,10 @@ build:
 upload:
   stage: upload
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/linux-arm64/epos-linux-arm64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/linux/1.0.0/epos-linux-arm64"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/linux-amd64/epos-linux-amd64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/linux/1.0.0/epos-linux-amd64"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/darwin-arm64/epos-darwin-arm64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/darwin/1.0.0/epos-darwin-arm64"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/darwin-amd64/epos-darwin-amd64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/darwin/1.0.0/epos-darwin-amd64"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/darwin-arm64/epos-windows-arm64.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/windows/1.0.0/epos-windows-arm64.exe"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ./out/darwin-amd64/epos-windows-amd64.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/windows/1.0.0/epos-windows-amd64.exe"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-linux-arm64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/linux/1.0.0/epos-linux-arm64"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-linux-amd64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/linux/1.0.0/epos-linux-amd64"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-darwin-arm64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/darwin/1.0.0/epos-darwin-arm64"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-darwin-amd64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/darwin/1.0.0/epos-darwin-amd64"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-windows-arm64.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/windows/1.0.0/epos-windows-arm64.exe"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/epos-windows-amd64.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-open-source/windows/1.0.0/epos-windows-amd64.exe"'
 
