@@ -13,8 +13,8 @@ build:
     - mv ./out/linux-amd64/epos-linux-amd64 ${CI_PROJECT_DIR}
     - mv ./out/darwin-arm64/epos-darwin-arm64 ${CI_PROJECT_DIR}
     - mv ./out/darwin-amd64/epos-darwin-amd64 ${CI_PROJECT_DIR}
-    - mv ./out/windows-arm64/epos-windows-arm64 ${CI_PROJECT_DIR}
-    - mv ./out/windows-amd64/epos-windows-amd64 ${CI_PROJECT_DIR}
+    - mv ./out/windows-arm64/epos-windows-arm64.exe ${CI_PROJECT_DIR}
+    - mv ./out/windows-amd64/epos-windows-amd64.exe ${CI_PROJECT_DIR}
   artifacts:
     # instead of manually adding i.e. the built binaries, we can instead just
     # grab anything not tracked in Git
@@ -25,7 +25,7 @@ build:
     - ./epos-linux-amd64
     - ./epos-darwin-arm64
     - ./epos-darwin-amd64
-    - ./epos-windows-arm64
-    - ./epos-windows-amd64
+    - ./epos-windows-arm64.exe
+    - ./epos-windows-amd64.exe
 
 

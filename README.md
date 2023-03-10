@@ -89,7 +89,7 @@ For further information follow the official guidelines: https://docs.docker.com/
 
 | Variable name | Image name | Default Tag |
 |--|--|--|
-| GUI_IMAGE | epos-gui | opensource |
+| GUI_IMAGE | epos-gui | 1.0.12 |
 | METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
 | MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
 | GATEWAY_IMAGE | epos-api-gateway | 1.1.0 |
