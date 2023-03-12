@@ -16,32 +16,32 @@ build:
     - mkdir ${CI_PROJECT_DIR}/windows-arm64/
     - mkdir ${CI_PROJECT_DIR}/windows-amd64/
     # Move to gitlab build directory
-    - mv ./out/linux-arm64/epos-installer ${CI_PROJECT_DIR}/linux-arm64/
-    - mv ./out/linux-amd64/epos-installer ${CI_PROJECT_DIR}/linux-amd64/
-    - mv ./out/darwin-arm64/epos-installer ${CI_PROJECT_DIR}/darwin-arm64/
-    - mv ./out/darwin-amd64/epos-installer ${CI_PROJECT_DIR}/darwin-amd64/
-    - mv ./out/windows-arm64/epos-installer.exe ${CI_PROJECT_DIR}/windows-arm64/
-    - mv ./out/windows-amd64/epos-installer.exe ${CI_PROJECT_DIR}/windows-amd64/
+    - mv ./out/linux-arm64/epos-docker-cli ${CI_PROJECT_DIR}/linux-arm64/
+    - mv ./out/linux-amd64/epos-docker-cli ${CI_PROJECT_DIR}/linux-amd64/
+    - mv ./out/darwin-arm64/epos-docker-cli ${CI_PROJECT_DIR}/darwin-arm64/
+    - mv ./out/darwin-amd64/epos-docker-cli ${CI_PROJECT_DIR}/darwin-amd64/
+    - mv ./out/windows-arm64/epos-docker-cli.exe ${CI_PROJECT_DIR}/windows-arm64/
+    - mv ./out/windows-amd64/epos-docker-cli.exe ${CI_PROJECT_DIR}/windows-amd64/
   artifacts:
     # instead of manually adding i.e. the built binaries, we can instead just
     # grab anything not tracked in Git
     untracked: true
     expire_in: 1 hour
     paths:
-    - ./linux-arm64/epos-installer
-    - ./linux-amd64/epos-installer
-    - ./darwin-arm64/epos-installer
-    - ./darwin-amd64/epos-installer
-    - ./windows-arm64/epos-installer.exe
-    - ./windows-amd64/epos-installer.exe
+    - ./linux-arm64/epos-docker-cli
+    - ./linux-amd64/epos-docker-cli
+    - ./darwin-arm64/epos-docker-cli
+    - ./darwin-amd64/epos-docker-cli
+    - ./windows-arm64/epos-docker-cli.exe
+    - ./windows-amd64/epos-docker-cli.exe
 
 upload:
   stage: upload
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-arm64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-linux-arm64/1.0.0/epos-installer"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-amd64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-linux-amd64/1.0.0/epos-installer"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-arm64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-darwin-arm64/1.0.0/epos-installer"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-amd64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-darwin-amd64/1.0.0/epos-installer"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-arm64/epos-installer.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-windows-arm64/1.0.0/epos-installer.exe"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-amd64/epos-installer.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-windows-amd64/1.0.0/epos-installer.exe"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-arm64/epos-docker-cli "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-linux-arm64/1.0.0/epos-docker-cli"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-amd64/epos-docker-cli "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-linux-amd64/1.0.0/epos-docker-cli"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-arm64/epos-docker-cli "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-darwin-arm64/1.0.0/epos-docker-cli"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-amd64/epos-docker-cli "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-darwin-amd64/1.0.0/epos-docker-cli"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-arm64/epos-docker-cli.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-windows-arm64/1.0.0/epos-docker-cli.exe"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-amd64/epos-docker-cli.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-docker-cli-windows-amd64/1.0.0/epos-docker-cli.exe"'
 
