@@ -6,7 +6,7 @@
 EPOS Open Source - Docker installer is part of the EPOS Open Source project for local installation using Docker.
 It contains a set of docker images to deploy the EPOS ecosystem. 
 
-Use `epos-<os>-<architecture>` binary to spin up local environment on Linux, Mac OS X or Windows.
+Use `epos-installer` binary to spin up local environment on Linux, Mac OS X or Windows.
 
 ## Prerequisites
 
@@ -111,16 +111,16 @@ We regularly update images used in this stack.
 
 Download the binary file according to your OS.
 
-Then give permissions on `epos-<os>-<architecture>` file from a Terminal (in Linux/MacOS):
+Then give permissions on `epos-installer` file from a Terminal (in Linux/MacOS):
 
 ```
-chmod +x epos-<os>-<architecture>
+chmod +x epos-installer
 ```
 
 ## Usage
 
 ```
-./epos-<os>-<architecture> <command>
+./epos-installer <command>
 ```
 
 The `<command>` field value is one of the following listed below:
@@ -129,7 +129,7 @@ The `<command>` field value is one of the following listed below:
 EPOS Open Source CLI installer to deploy the EPOS System using docker-compose
 
 Usage:
-  epos-<os>-<architecture> [command]
+  epos-installer [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -142,7 +142,7 @@ Available Commands:
 Flags:
   -h, --help   help for [command]
 
-Use "epos-<os>-<architecture> [command] --help" for more information about a command.
+Use "epos-installer [command] --help" for more information about a command.
 ```
 
 ## Deploy a new environment
@@ -151,7 +151,7 @@ Use "epos-<os>-<architecture> [command] --help" for more information about a com
 Deploy an enviroment with .env set up on docker
 
 Usage:
-  epos-<os>-<architecture> deploy [flags]
+  epos-installer deploy [flags]
 
 Flags:
       --dockercompose string   Docker compose file, use default if not provided
@@ -165,7 +165,7 @@ Flags:
 Delete an enviroment with .env set up on docker
 
 Usage:
-  epos-<os>-<architecture> delete [flags]
+  epos-installer delete [flags]
 
 Flags:
       --dockercompose string   Docker compose file, use default if not provided
@@ -183,7 +183,7 @@ Download or create TTL files according to EPOS-DCAT-AP and use the following com
 Populate the existing environment with metadata information in a specific folder
 
 Usage:
-  epos-<os>-<architecture> populate [flags]
+  epos-installer populate [flags]
 
 Flags:
       --env string      Environment variable file
@@ -201,7 +201,7 @@ Use the API Gateway endpoint to manually ingest metadata TTL files into the cata
 Export configuration files for customization in output folder, options: [env, compose]
 
 Usage:
-  epos-<os>-<architecture> export [flags]
+  epos-installer export [flags]
 
 Flags:
       --file string     File to export, available options: [env, compose]

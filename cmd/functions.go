@@ -1,6 +1,6 @@
 /*
     EPOS Open Source - Local installation with Docker
-    Copyright (C) 2022  EPOS ERIC
+    Copyright (C) 2023  EPOS ERIC
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ func print_urls() {
      &&&&&&&&&&&&&&&&&& *&&&&&&                 ************** *         *   &&&&&&&&&&&&&&&&&&&    
      &&&&&&&&&&&%&&&&&& *&&&&&&                   ************* ,*******     &&&%&&&&&&&&&&&&       
                                                       **************                             
-    Copyright (C) 2022  EPOS ERIC`);
+    Copyright (C) 2023  EPOS ERIC`);
 
     fmt.Print("++++++++++++++++++ EPOS ACCESS POINTS ++++++++++++++++++\n")
     fmt.Print("--------------------------------------------------------\n")
