@@ -9,6 +9,12 @@ build:
   script:
     - go build ./...
     - /bin/bash generate-out.sh
+    - mkdir ${CI_PROJECT_DIR}/linux-arm64/
+    - mkdir ${CI_PROJECT_DIR}/linux-amd64/
+    - mkdir ${CI_PROJECT_DIR}/darwin-arm64/
+    - mkdir ${CI_PROJECT_DIR}/darwin-amd64/
+    - mkdir ${CI_PROJECT_DIR}/windows-arm64/
+    - mkdir ${CI_PROJECT_DIR}/windows-amd64/
     # Move to gitlab build directory
     - mv ./out/linux-arm64/epos-installer ${CI_PROJECT_DIR}/linux-arm64/
     - mv ./out/linux-amd64/epos-installer ${CI_PROJECT_DIR}/linux-amd64/

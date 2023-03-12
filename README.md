@@ -13,108 +13,16 @@ Use `epos-installer` binary to spin up local environment on Linux, Mac OS X or W
 Docker Engine and Docker Compose installed on your host machine.
 For further information follow the official guidelines: https://docs.docker.com/get-docker/
 
-## Environment Variables
-### Base environment configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| API_HOST | ${API_HOST} | API Host IP, if not set is generated automatically using machine IP |
-| EXECUTE_HOST | ${API_HOST} | Internal variable to setup redirections for the external access service, if not set is generated automatically using machine IP |
-| DEPLOY_PATH | / | Context path of the environment|
-| BASE_CONTEXT | empty value | Context path name of the environment (similar to DEPLOY_PATH but without the initial /) |
-| API_PATH | /api/v1 | API GATEWAY access path|
-| GUI_PORT | 8000 | Port used by EPOS Data Portal or other GUIs |
-| BACKOFFICE_GUI_PORT | 9000 | Port used by EPOS Backoffice UI or other Backoffice GUIs |
-| API_PORT | 8080 | Port used by EPOS API Gateway |
-
-### RabbitMQ configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| BROKER_USERNAME | changeme | RabbitMQ username |
-| BROKER_PASSWORD | changeme | RabbitMQ password |
-| BROKER_VHOST | changeme | RabbitMQ vhost |
-
-### RabbitMQ configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| POSTGRES_USER | postgres | Database user |
-| POSTGRESQL_PASSWORD | changeme | Database password |
-| POSTGRES_DB | cerif | Database name |
-| POSTGRESQL_CONNECTION_STRING | jdbc:postgresql://postgrescerif:5432/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD} | Database connection string based on previous configurations |
-| PERSISTENCE_NAME | EPOSDataModel | Persistence Name of scientific metadata |
-| PERSISTENCE_NAME_PROCESSING | EPOSProcessing | Persistence Name of processing metadata |
-
-### Data Metadata Service configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| NUM_OF_PUBLISHERS | 10 | Number of publishers on rabbitmq |
-| NUM_OF_CONSUMERS | 10 | Number of consumers on rabbitmq |
-| CONNECTION_POOL_INIT_SIZE | 1 | Initial number of connections to database |
-| CONNECTION_POOL_MIN_SIZE | 1 | Minimum number of connections to database |
-| CONNECTION_POOL_MAX_SIZE | 20 | Maximum number of connections to database |
-
-### Monitoring Service configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| MONITORING | false | True if activate interaction between system and monitoring service |
-| MONITORING_URL | changeme | Monitoring service url |
-| MONITORING_USER | changeme | Monitoring service username |
-| MONITORING_PWD | changeme | Monitoring service password |
-
-### Monitoring Service configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| DOCKER_REGISTRY | epos | Docker registry url |
-| REGISTRY_USERNAME | changeme | Docker registry username |
-| REGISTRY_PASSWORD | changeme | Docker registry password |
-
-### GitLab/Hub configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| REPOTOKEN_DEFAULT | changeme | Token to access gitlab repositories, used from converter to download plugins |
-
-### ICS-D configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| SWIRRL_BASE_PATH | https://epos-ics-d.brgm-rec.fr/swirrl-api/ | Temporary url to swirrl APIs |
-
-### Docker Images for Open Source 
-
-| Variable name | Image name | Default Tag |
-|--|--|--|
-| GUI_IMAGE | epos-gui | 1.0.12 |
-| METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
-| MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
-| GATEWAY_IMAGE | epos-api-gateway | 1.1.0 |
-| RESOURCES_SERVICE_IMAGE | resources-service | 1.2.0 |
-| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.3.5 |
-| INGESTOR_IMAGE | ingestor-service | 1.3.0 |
-| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.2.0 |
-| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.1.0 |
-| CONVERTER_IMAGE | converter-service | 1.1.5 |
-| PROCESSING_ACCESS_SERVICE_IMAGE | distributed-processing-service | 0.2.0 |
-
-
-## Maintenance
-
-We regularly update images used in this stack.
-
 
 ## Installation
 
-Download the binary file according to your OS.
+Download the binary file according to your OS at the following link: https://epos-ci.brgm.fr/epos/opensource-docker/-/packages 
 
-Then give permissions on `epos-installer` file from a Terminal (in Linux/MacOS):
+Give permissions on `epos-installer` file and move on binary folder from a Terminal (in Linux/MacOS):
 
 ```
 chmod +x epos-installer
+sudo mv epos-installer /usr/local/bin/epos-installer
 ```
 
 ## Usage
@@ -226,6 +134,98 @@ EPOS API Gateway:
 ```
 http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 ```
+
+## Environment Variables
+### Base environment configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| API_HOST | ${API_HOST} | API Host IP, if not set is generated automatically using machine IP |
+| EXECUTE_HOST | ${API_HOST} | Internal variable to setup redirections for the external access service, if not set is generated automatically using machine IP |
+| DEPLOY_PATH | / | Context path of the environment|
+| BASE_CONTEXT | empty value | Context path name of the environment (similar to DEPLOY_PATH but without the initial /) |
+| API_PATH | /api/v1 | API GATEWAY access path|
+| GUI_PORT | 8000 | Port used by EPOS Data Portal or other GUIs |
+| BACKOFFICE_GUI_PORT | 9000 | Port used by EPOS Backoffice UI or other Backoffice GUIs |
+| API_PORT | 8080 | Port used by EPOS API Gateway |
+
+### RabbitMQ configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| BROKER_USERNAME | changeme | RabbitMQ username |
+| BROKER_PASSWORD | changeme | RabbitMQ password |
+| BROKER_VHOST | changeme | RabbitMQ vhost |
+
+### RabbitMQ configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| POSTGRES_USER | postgres | Database user |
+| POSTGRESQL_PASSWORD | changeme | Database password |
+| POSTGRES_DB | cerif | Database name |
+| POSTGRESQL_CONNECTION_STRING | jdbc:postgresql://postgrescerif:5432/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD} | Database connection string based on previous configurations |
+| PERSISTENCE_NAME | EPOSDataModel | Persistence Name of scientific metadata |
+| PERSISTENCE_NAME_PROCESSING | EPOSProcessing | Persistence Name of processing metadata |
+
+### Data Metadata Service configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| NUM_OF_PUBLISHERS | 10 | Number of publishers on rabbitmq |
+| NUM_OF_CONSUMERS | 10 | Number of consumers on rabbitmq |
+| CONNECTION_POOL_INIT_SIZE | 1 | Initial number of connections to database |
+| CONNECTION_POOL_MIN_SIZE | 1 | Minimum number of connections to database |
+| CONNECTION_POOL_MAX_SIZE | 20 | Maximum number of connections to database |
+
+### Monitoring Service configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| MONITORING | false | True if activate interaction between system and monitoring service |
+| MONITORING_URL | changeme | Monitoring service url |
+| MONITORING_USER | changeme | Monitoring service username |
+| MONITORING_PWD | changeme | Monitoring service password |
+
+### Monitoring Service configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| DOCKER_REGISTRY | epos | Docker registry url |
+| REGISTRY_USERNAME | changeme | Docker registry username |
+| REGISTRY_PASSWORD | changeme | Docker registry password |
+
+### GitLab/Hub configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| REPOTOKEN_DEFAULT | changeme | Token to access gitlab repositories, used from converter to download plugins |
+
+### ICS-D configuration
+
+| Name | Standard Value | Description |
+|--|--|--|
+| SWIRRL_BASE_PATH | https://epos-ics-d.brgm-rec.fr/swirrl-api/ | Temporary url to swirrl APIs |
+
+### Docker Images for Open Source 
+
+| Variable name | Image name | Default Tag |
+|--|--|--|
+| GUI_IMAGE | epos-gui | 1.0.12 |
+| METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
+| MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
+| GATEWAY_IMAGE | epos-api-gateway | 1.1.0 |
+| RESOURCES_SERVICE_IMAGE | resources-service | 1.2.0 |
+| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.3.5 |
+| INGESTOR_IMAGE | ingestor-service | 1.3.0 |
+| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.2.0 |
+| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.1.0 |
+| CONVERTER_IMAGE | converter-service | 1.1.5 |
+| PROCESSING_ACCESS_SERVICE_IMAGE | distributed-processing-service | 0.2.0 |
+
+## Maintenance
+
+We regularly update images used in this stack.
 
 ## Contributing
 
