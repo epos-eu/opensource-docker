@@ -40,7 +40,7 @@ upload:
   script:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-arm64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-linux-arm64/1.0.0/epos-installer"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/linux-amd64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-linux-amd64/1.0.0/epos-installer"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-arm64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-darwin-arm64/1.0.0/epos-installer'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-arm64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-darwin-arm64/1.0.0/epos-installer"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/darwin-amd64/epos-installer "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-darwin-amd64/1.0.0/epos-installer"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-arm64/epos-installer.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-windows-arm64/1.0.0/epos-installer.exe"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/windows-amd64/epos-installer.exe "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/epos-installer-windows-amd64/1.0.0/epos-installer.exe"'
