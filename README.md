@@ -16,7 +16,7 @@ For further information follow the official guidelines: https://docs.docker.com/
 
 ## Installation
 
-Download the binary file according to your OS at the following link: https://epos-ci.brgm.fr/epos/opensource-docker/-/packages 
+Download the binary file according to your OS.
 
 Give permissions on `epos-docker-cli` file and move on binary folder from a Terminal (in Linux/MacOS):
 
@@ -200,12 +200,6 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | Name | Standard Value | Description |
 |--|--|--|
 | REPOTOKEN_DEFAULT | changeme | Token to access gitlab repositories, used from converter to download plugins |
-
-### ICS-D configuration
-
-| Name | Standard Value | Description |
-|--|--|--|
-| SWIRRL_BASE_PATH | https://epos-ics-d.brgm-rec.fr/swirrl-api/ | Temporary url to swirrl APIs |
 
 ### Docker Images for Open Source 
 
