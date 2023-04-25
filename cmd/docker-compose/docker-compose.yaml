@@ -17,32 +17,6 @@
 version: '3.7'
 
 services:
-  gui:
-    image: "${DOCKER_REGISTRY}/${GUI_IMAGE}"
-    container_name: gui
-    ports:
-      - "${GUI_PORT}:80"
-    environment:
-      - API_HOST="${API_HOST}"
-    volumes:
-      - rabbitmq:/var/lib/rabbitmq/
-    networks:
-      - epos_network
-    depends_on:
-      - gateway
-  #backofficegui:
-  #  image: "${DOCKER_REGISTRY}/${BACKOFFICE_GUI_IMAGE}"
-  #  container_name: backoffice-gui
-  #  ports:
-  #    - "${BACKOFFICE_GUI_PORT}:80"
-  #  environment:
-  #    - API_HOST="${API_HOST}"
-  #  volumes:
-  #    - rabbitmq:/var/lib/rabbitmq/
-  #  networks:
-  #    - epos_network
-  #  depends_on:
-  #    - gateway
   gateway:
     image: "${DOCKER_REGISTRY}/${GATEWAY_IMAGE}"
     container_name: gateway
@@ -93,6 +67,7 @@ services:
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
       - FACETS_DEFAULT=true
+      - REDIS_SERVER=redis-server
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/resources-service/v1/actuator/health"]
       interval: 1m30s
@@ -168,6 +143,7 @@ services:
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
+      - REDIS_SERVER=redis-server
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/external-access-service/v1/actuator/health"]
       interval: 1m30s
@@ -190,34 +166,6 @@ services:
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - REPOTOKEN_DEFAULT=${REPOTOKEN_DEFAULT}
-    depends_on:
-      - rabbitmq
-  processingaccessservice:
-    image: "${DOCKER_REGISTRY}/${PROCESSING_ACCESS_SERVICE_IMAGE}"
-    container_name: processing-access-service
-    volumes:
-      - processingaccessservice:/processingaccessservice
-    networks:
-      - epos_network
-    restart: always
-    environment:
-      - BROKER_HOST=rabbitmq
-      - BROKER_USERNAME=${BROKER_USERNAME}
-      - BROKER_PASSWORD=${BROKER_PASSWORD}
-      - BROKER_VHOST=${BROKER_VHOST}
-      - BASECONTEXT=${BASE_CONTEXT}
-      - PERSISTENCE_NAME=${PERSISTENCE_NAME_PROCESSING}
-      - POSTGRESQL_HOST=postgrescerif:5432
-      - POSTGRESQL_DBNAME=${POSTGRES_DB}
-      - POSTGRESQL_USERNAME=${POSTGRES_USER}
-      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
-      - SWIRRL_BASE_PATH=${SWIRRL_BASE_PATH}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/processing-access-service/v1/actuator/health"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     depends_on:
       - rabbitmq
   datametadataservice:
@@ -266,6 +214,18 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - psqldata:/var/lib/postgresql
+    depends_on:
+      - rabbitmq
+    networks:
+      - epos_network
+  redis:
+    restart: always
+    image: "${REDIS_IMAGE}"
+    container_name: redis-server
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - psqldata:/var/lib/postgresql
     depends_on:

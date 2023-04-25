@@ -139,6 +139,22 @@ var populateCmd = & cobra.Command {
         } else {
             fmt.Println("You need to define a folder")
         }
+
+        command := exec.Command("docker",
+                    "exec",
+                    "redis-server",
+                    "redis-cli",
+                    "FLUSHALL")
+
+            cmd.Println(command.String())
+
+            command.Stdout = os.Stdout
+            command.Stderr = os.Stderr
+            if err := command.Run();
+            err != nil {
+                log.Fatal("Error flushing redis container...\n")
+                log.Fatal(err)
+            }
         print_urls()
     },
 }
@@ -158,7 +174,7 @@ func GetFreePort() (int, error) {
 }
 
 func init() {
-    populateCmd.Flags().String("folder", "", "Folder where ttl files are located")
+    populateCmd.Flags().String("folder", "", "Fullpath folder where ttl files are located")
     populateCmd.MarkFlagRequired("folder")
     populateCmd.Flags().String("env", "", "Environment variable file")
 }

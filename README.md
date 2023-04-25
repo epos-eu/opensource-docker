@@ -205,17 +205,16 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 
 | Variable name | Image name | Default Tag |
 |--|--|--|
-| GUI_IMAGE | epos-gui | 1.0.12 |
-| METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
 | MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
+| REDIS_IMAGE | redis | 7.0.11 |
 | GATEWAY_IMAGE | epos-api-gateway | 1.1.0 |
-| RESOURCES_SERVICE_IMAGE | resources-service | 1.2.0 |
-| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.3.5 |
-| INGESTOR_IMAGE | ingestor-service | 1.3.0 |
-| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.2.0 |
+| RESOURCES_SERVICE_IMAGE | resources-service | 1.3.2 |
+| INGESTOR_IMAGE | ingestor-service | 1.3.1 |
+| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.3.2 |
 | BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.1.0 |
 | CONVERTER_IMAGE | converter-service | 1.1.5 |
-| PROCESSING_ACCESS_SERVICE_IMAGE | distributed-processing-service | 0.2.0 |
+| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.3.17 |
+| METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
 
 ## Maintenance
 
