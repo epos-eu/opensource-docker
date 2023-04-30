@@ -148,6 +148,8 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | GUI_PORT | 8000 | Port used by EPOS Data Portal or other GUIs |
 | BACKOFFICE_GUI_PORT | 9000 | Port used by EPOS Backoffice UI or other Backoffice GUIs |
 | API_PORT | 8080 | Port used by EPOS API Gateway |
+| IS_MONITORING_AUTH | false | Variable used to protect monitoring endpoint via JWT |
+| IS_AAI_ENABLED | false | Variable used to protect backoffice endpoints via AAI service |
 
 ### RabbitMQ configuration
 
