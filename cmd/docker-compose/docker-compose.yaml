@@ -31,7 +31,9 @@ services:
       - LOAD_INGESTOR_API=true
       - LOAD_EXTERNAL_ACCESS_API=true
       - LOAD_BACKOFFICE_API=true
-      - LOAD_PROCESSING_API=true
+      - LOAD_PROCESSING_API=false
+      - IS_MONITORING_AUTH=false
+      - IS_AAI_ENABLED=false
     depends_on:
       - rabbitmq
       - resources
