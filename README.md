@@ -6,7 +6,7 @@
 EPOS Open Source - Docker installer is part of the EPOS Open Source project for local installation using Docker.
 It contains a set of docker images to deploy the EPOS ecosystem. 
 
-Use `epos-docker-cli` binary to spin up local environment on Linux, Mac OS X or Windows.
+Use `opensource-docker` binary to spin up local environment on Linux, Mac OS X or Windows.
 
 ## Prerequisites
 
@@ -18,17 +18,17 @@ For further information follow the official guidelines: https://docs.docker.com/
 
 Download the binary file according to your OS.
 
-Give permissions on `epos-docker-cli` file and move on binary folder from a Terminal (in Linux/MacOS):
+Give permissions on `opensource-docker` file and move on binary folder from a Terminal (in Linux/MacOS):
 
 ```
-chmod +x epos-docker-cli
-sudo mv epos-docker-cli /usr/local/bin/epos-docker-cli
+chmod +x opensource-docker
+sudo mv opensource-docker /usr/local/bin/opensource-docker
 ```
 
 ## Usage
 
 ```
-./epos-docker-cli <command>
+./opensource-docker <command>
 ```
 
 The `<command>` field value is one of the following listed below:
@@ -37,7 +37,7 @@ The `<command>` field value is one of the following listed below:
 EPOS Open Source CLI installer to deploy the EPOS System using docker-compose
 
 Usage:
-  epos-docker-cli [command]
+  opensource-docker [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -50,7 +50,7 @@ Available Commands:
 Flags:
   -h, --help   help for [command]
 
-Use "epos-docker-cli [command] --help" for more information about a command.
+Use "opensource-docker [command] --help" for more information about a command.
 ```
 
 ## Deploy a new environment
@@ -59,7 +59,7 @@ Use "epos-docker-cli [command] --help" for more information about a command.
 Deploy an enviroment with .env set up on docker
 
 Usage:
-  epos-docker-cli deploy [flags]
+  opensource-docker deploy [flags]
 
 Flags:
       --dockercompose string   Docker compose file, use default if not provided
@@ -73,7 +73,7 @@ Flags:
 Delete an enviroment with .env set up on docker
 
 Usage:
-  epos-docker-cli delete [flags]
+  opensource-docker delete [flags]
 
 Flags:
       --dockercompose string   Docker compose file, use default if not provided
@@ -91,7 +91,7 @@ Download or create TTL files according to EPOS-DCAT-AP and use the following com
 Populate the existing environment with metadata information in a specific folder
 
 Usage:
-  epos-docker-cli populate [flags]
+  opensource-docker populate [flags]
 
 Flags:
       --env string      Environment variable file
@@ -109,7 +109,7 @@ Use the API Gateway endpoint to manually ingest metadata TTL files into the cata
 Export configuration files for customization in output folder, options: [env, compose]
 
 Usage:
-  epos-docker-cli export [flags]
+  opensource-docker export [flags]
 
 Flags:
       --file string     File to export, available options: [env, compose]
