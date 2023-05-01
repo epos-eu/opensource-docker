@@ -12,7 +12,8 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - run: pwd && ls
+      - run: pwd
+      - run: ls
       - run: sed -e "s/_VERSION_/$GITHUB_REF_NAME/g" ./cmd/functions.go
       - uses: actions/checkout@v3
         with:
