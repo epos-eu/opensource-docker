@@ -10,5 +10,5 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - run: |
-                  git remote add origin2 https://${{secrets.GITLAB}}@https://epos-ci.brgm.fr/epos/opensource-docker.git
+                  git remote add origin2 https://${{secrets.GITLAB}}@epos-ci.brgm.fr/epos/opensource-docker.git
                   git push origin2 local_branch:patch-opensource
