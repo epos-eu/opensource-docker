@@ -24,6 +24,9 @@ import (
     "io/ioutil"
     "path/filepath"
     "net"
+    "context"
+    "github.com/google/go-github/v52/github"
+    "github.com/hashicorp/go-version"
 )
 
 func setupIPs() {
@@ -94,4 +97,26 @@ func generateFile( text []byte, filePath string ) {
     }
 
     fmt.Println("Created file ", filePath)
+}
+
+func getLastTag() {
+    client := github.NewClient(nil)
+    tags, _, err := client.Repositories.ListTags(context.Background(), "epos-eu", "opensource-docker", nil)
+    if err != nil {
+        log.Fatal("Could not retrieve tags of the repository", err)
+    }
+    if len(tags) > 0 {
+        latestTag := tags[0]
+        v1, _ := version.NewVersion(getVersion())
+        v2, _ := version.NewVersion(latestTag.GetName())
+        if v1.LessThan(v2) {
+            fmt.Printf("New version available %s ---> %s", v1, v2)
+        }
+    } else {
+        fmt.Printf("No tags yet\n")
+    }
+}
+
+func getVersion() string {
+    return "_VERSION_"
 }
