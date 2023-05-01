@@ -1,0 +1,14 @@
+name: "mirror"
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    deploy-me:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - run: |
+                  git remote add origin2 https://${{secrets.GITLAB}}@https://epos-ci.brgm.fr/epos/opensource-docker.git
+                  git push origin2 local_branch:patch-opensource
