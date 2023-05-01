@@ -11,4 +11,5 @@ jobs:
             - uses: actions/checkout@v2
             - run: |
                   git remote add origin2 https://github:${{secrets.GITLAB}}@epos-ci.brgm.fr/epos/opensource-docker.git
+                  git fetch --unshallow origin2
                   git push origin2 main:patch-opensource
