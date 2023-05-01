@@ -11,6 +11,6 @@ jobs:
             - uses: actions/checkout@v2
             - run: |
                   git remote add remote-repo https://github:${{secrets.GITLAB}}@epos-ci.brgm.fr/epos/opensource-docker.git
-                  git fetch --unshallow remote-repo
+                  git fetch --unshallow
                   git checkout -b opensource-patch
                   git push remote-repo opensource-patch
