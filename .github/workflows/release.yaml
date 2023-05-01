@@ -16,12 +16,6 @@ jobs:
         with:
           fetch-depth: 0
       - run: git fetch --force --tags
-      - name: Replace string in file
-        uses: MathieuSoysal/replace-string-in-file@v1.0.0
-        with:
-          file: ./cmd/functions.go
-          old-string: _VERSION_
-          new-string: $GITHUB_REF_NAME
       - uses: actions/setup-go@v4
         with:
           go-version: stable
@@ -29,6 +23,6 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean --skip-validate
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

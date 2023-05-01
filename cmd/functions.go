@@ -119,5 +119,5 @@ func getLastTag() {
 }
 
 func getVersion() string {
-    return "_VERSION_"
+    return "0.1.2"
 }
