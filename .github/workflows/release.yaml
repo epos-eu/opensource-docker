@@ -16,7 +16,12 @@ jobs:
         with:
           fetch-depth: 0
       - run: git fetch --force --tags
-      - run: sed -e "s/_VERSION_/$GITHUB_REF_NAME/g" ./cmd/functions.go
+      - name: Replace string in file
+        uses: MathieuSoysal/replace-string-in-file@v1.0.0
+        with:
+          file: ./cmd/functions.go
+          old-string: _VERSION_
+          new-string: $GITHUB_REF_NAME
       - uses: actions/setup-go@v4
         with:
           go-version: stable

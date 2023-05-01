@@ -107,10 +107,11 @@ func getLastTag() {
     }
     if len(tags) > 0 {
         latestTag := tags[0]
-        v1, _ := version.NewVersion(getVersion())
+        currentVersion := getVersion()
+        v1, _ := version.NewVersion(currentVersion)
         v2, _ := version.NewVersion(latestTag.GetName())
         if v1.LessThan(v2) {
-            fmt.Printf("New version available %s ---> %s", v1, v2)
+            fmt.Printf("New version available %s ---> %s\n", v1, v2)
         }
     } else {
         fmt.Printf("No tags yet\n")
