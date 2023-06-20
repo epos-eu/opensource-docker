@@ -27,13 +27,15 @@ services:
     restart: always
     environment:
       - BASECONTEXT=${BASE_CONTEXT}
-      - LOAD_RESOURCES_API=true
-      - LOAD_INGESTOR_API=true
-      - LOAD_EXTERNAL_ACCESS_API=true
-      - LOAD_BACKOFFICE_API=true
-      - LOAD_PROCESSING_API=false
-      - IS_MONITORING_AUTH=false
-      - IS_AAI_ENABLED=false
+      - LOAD_RESOURCES_API=${LOAD_RESOURCES_API}
+      - LOAD_INGESTOR_API=${LOAD_INGESTOR_API}
+      - LOAD_EXTERNAL_ACCESS_API=${LOAD_EXTERNAL_ACCESS_API}
+      - LOAD_BACKOFFICE_API=${LOAD_BACKOFFICE_API}
+      - LOAD_PROCESSING_API=${LOAD_PROCESSING_API}
+      - IS_MONITORING_AUTH=${IS_MONITORING_AUTH}
+      - IS_AAI_ENABLED=${IS_AAI_ENABLED}
+      - SECURITY_KEY=${SECURITY_KEY}
+      - AAI_SERVICE_ENDPOINT=${AAI_SERVICE_ENDPOINT}
     depends_on:
       - rabbitmq
       - resources
@@ -49,9 +51,9 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq/
     environment:
-      - "RABBITMQ_DEFAULT_PASS=${BROKER_USERNAME}"
-      - "RABBITMQ_DEFAULT_USER=${BROKER_PASSWORD}"
-      - "RABBITMQ_DEFAULT_VHOST=${BROKER_VHOST}"
+      - RABBITMQ_DEFAULT_PASS=${BROKER_USERNAME}
+      - RABBITMQ_DEFAULT_USER=${BROKER_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=${BROKER_VHOST}
     networks:
       - epos_network
   resources:
@@ -63,13 +65,14 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
-      - FACETS_DEFAULT=true
-      - REDIS_SERVER=redis-server
+      - FACETS_DEFAULT=${FACETS_DEFAULT}
+      - FACETS_TYPE_DEFAULT=${FACETS_TYPE_DEFAULT}
+      - REDIS_SERVER=${REDIS_SERVER}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/resources-service/v1/actuator/health"]
       interval: 1m30s
@@ -87,7 +90,7 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
@@ -111,17 +114,17 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
       - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
-      - POSTGRESQL_HOST=postgrescerif:5432
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST}
       - POSTGRESQL_DBNAME=${POSTGRES_DB}
       - POSTGRESQL_USERNAME=${POSTGRES_USER}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
-      - INGESTOR_HASH=3F58A1895982CC81A2E5CEDA7DD9AC7009DF9998
+      - INGESTOR_HASH=${INGESTOR_HASH}
       - BASECONTEXT=${BASE_CONTEXT}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/ingestor-service/v1/actuator/health"]
@@ -140,12 +143,12 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
-      - REDIS_SERVER=redis-server
+      - REDIS_SERVER=${REDIS_SERVER}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/external-access-service/v1/actuator/health"]
       interval: 1m30s
@@ -163,7 +166,7 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
@@ -179,13 +182,13 @@ services:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=rabbitmq
+      - BROKER_HOST=${BROKER_HOST}
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
       - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
-      - POSTGRESQL_HOST=postgrescerif:5432
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST}
       - POSTGRESQL_DBNAME=${POSTGRES_DB}
       - POSTGRESQL_USERNAME=${POSTGRES_USER}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -228,8 +231,6 @@ services:
     container_name: redis-server
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - psqldata:/var/lib/postgresql
     depends_on:
       - rabbitmq
     networks:
