@@ -197,11 +197,23 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | REGISTRY_USERNAME | changeme | Docker registry username |
 | REGISTRY_PASSWORD | changeme | Docker registry password |
 
-### GitLab/Hub configuration
+### Other Environment variables
 
 | Name | Standard Value | Description |
 |--|--|--|
-| REPOTOKEN_DEFAULT | changeme | Token to access gitlab repositories, used from converter to download plugins |
+| LOAD_RESOURCES_API | true | |
+| LOAD_INGESTOR_API | true | |
+| LOAD_EXTERNAL_ACCESS_API | true | |
+| LOAD_BACKOFFICE_API | true | |
+| LOAD_PROCESSING_API | false | |
+| IS_MONITORING_AUTH | false | |
+| IS_AAI_ENABLED | false | |
+| SECURITY_KEY | empty | |
+| AAI_SERVICE_ENDPOINT | empty | |
+| FACETS_DEFAULT | false | |
+| FACETS_TYPE_DEFAULT | categories | |
+| REDIS_SERVER | redis-server | |
+| INGESTOR_HASH | 3F58A1895982CC81A2E5CEDA7DD9AC7009DF9998 | |
 
 ### Docker Images for Open Source 
 
