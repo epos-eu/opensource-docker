@@ -26,7 +26,6 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"os"
