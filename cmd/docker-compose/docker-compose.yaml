@@ -170,7 +170,6 @@ services:
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
-      - REPOTOKEN_DEFAULT=${REPOTOKEN_DEFAULT}
     depends_on:
       - rabbitmq
   datametadataservice:
