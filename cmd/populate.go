@@ -97,6 +97,7 @@ var populateCmd = &cobra.Command{
 					r.Header.Add("path", "http://"+os.Getenv("LOCAL_IP")+":"+free_port_string+"/"+info.Name())
 					r.Header.Add("securityCode", "CodiceDiTest")
 					r.Header.Add("type", "single")
+					r.Header.Add("model", "EPOS-DCAT-AP-V1")
 
 					client := &http.Client{}
 					res, err := client.Do(r)
