@@ -90,7 +90,9 @@ func setupIPs() {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
 	val, present := os.LookupEnv("API_HOST_ENV")
-	if !present {
+	if present {
+		fmt.Print(val)
+	} else {
 		os.Setenv("API_HOST_ENV", localAddr.IP.String())
 	}
 
