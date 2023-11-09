@@ -90,9 +90,10 @@ func setupIPs() {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
 	os.Setenv("API_HOST_ENV", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
-	os.Setenv("EXECUTE_HOST", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT"))
-	os.Setenv("HOST", "http://"+localAddr.IP.String()+":"+os.Getenv("GUI_PORT"))
-	os.Setenv("LOCAL_IP", localAddr.IP.String())
+	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
+	os.Setenv("EXECUTE_HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("API_PORT"))
+	os.Setenv("HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("GUI_PORT"))
+	os.Setenv("LOCAL_IP", os.Getenv("API_HOST"))
 }
 
 func print_urls() {
@@ -114,7 +115,7 @@ func print_urls() {
     Copyright (C) 2023  EPOS ERIC`, string(colorReset))
 	t := table.NewWriter()
 	t.SetTitle("EPOS ACCESS POINTS")
-	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("LOCAL_IP") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
+	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("API_HOST") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
 	t.SetStyle(table.StyleColoredBlackOnGreenWhite)
 	fmt.Println(t.Render())
 }
@@ -220,5 +221,5 @@ func getLastDockerImageTag(repo string) string {
 }
 
 func getVersion() string {
-	return "0.3.0"
+	return "0.3.3"
 }
