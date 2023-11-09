@@ -89,11 +89,15 @@ func setupIPs() {
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	os.Setenv("API_HOST_ENV", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
-	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
-	os.Setenv("EXECUTE_HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("API_PORT"))
-	os.Setenv("HOST", "http://"+os.Getenv("API_HOST")+":"+os.Getenv("GUI_PORT"))
-	os.Setenv("LOCAL_IP", os.Getenv("API_HOST"))
+	val, present := os.LookupEnv("API_HOST_ENV")
+	if !present {
+		os.Setenv("API_HOST_ENV", localAddr.IP.String())
+	}
+
+	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
+	os.Setenv("EXECUTE_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT"))
+	os.Setenv("HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("GUI_PORT"))
+	os.Setenv("LOCAL_IP", os.Getenv("API_HOST_ENV"))
 }
 
 func print_urls() {
@@ -115,7 +119,7 @@ func print_urls() {
     Copyright (C) 2023  EPOS ERIC`, string(colorReset))
 	t := table.NewWriter()
 	t.SetTitle("EPOS ACCESS POINTS")
-	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("API_HOST") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
+	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("API_HOST_ENV") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
 	t.SetStyle(table.StyleColoredBlackOnGreenWhite)
 	fmt.Println(t.Render())
 }
@@ -181,7 +185,7 @@ func printSetup(env string, dockercomposefile string) {
 	}
 	t.AppendRow(table.Row{"Env File", env})
 	t.AppendRow(table.Row{"Docker Compose File", dockercomposefile})
-	t.AppendRow(table.Row{"Local IP", os.Getenv("LOCAL_IP")})
+	t.AppendRow(table.Row{"Local IP", os.Getenv("API_HOST_ENV")})
 	t.SetStyle(table.StyleColoredGreenWhiteOnBlack)
 
 	fmt.Println(t.Render())
@@ -221,5 +225,5 @@ func getLastDockerImageTag(repo string) string {
 }
 
 func getVersion() string {
-	return "0.3.3"
+	return "0.3.4"
 }
