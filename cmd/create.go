@@ -33,6 +33,7 @@ var deployCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
+		autoupdate, _ := cmd.Flags().GetString("autoupdate")
 		isDefaultEnv := false
 		if env == "" {
 			env = generateTempFile(configurations)
@@ -48,6 +49,11 @@ var deployCmd = &cobra.Command{
 		if isDefaultEnv {
 			checkImagesUpdate()
 		}
+
+		if autoupdate == "true" {
+			checkImagesUpdate()
+		}
+
 		setupIPs()
 		printSetup(env, dockercomposefile)
 		command := exec.Command("docker-compose",
@@ -103,4 +109,5 @@ var deployCmd = &cobra.Command{
 func init() {
 	deployCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
 	deployCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
+	deployCmd.Flags().String("autoupdate", "", "Auto update the images versions (true|false)")
 }

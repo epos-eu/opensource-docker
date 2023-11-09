@@ -89,7 +89,7 @@ func setupIPs() {
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	os.Setenv("API_HOST", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
+	os.Setenv("API_HOST_ENV", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
 	os.Setenv("EXECUTE_HOST", "http://"+localAddr.IP.String()+":"+os.Getenv("API_PORT"))
 	os.Setenv("HOST", "http://"+localAddr.IP.String()+":"+os.Getenv("GUI_PORT"))
 	os.Setenv("LOCAL_IP", localAddr.IP.String())
