@@ -221,10 +221,10 @@ services:
       start_period: 40s
     depends_on:
       - rabbitmq
-  postgrescerif:
+  metadatacatalogue:
     restart: always
     image: "${DOCKER_REGISTRY}/${METADATA_DB_IMAGE}"
-    container_name: postgrescerif
+    container_name: metadata-catalogue
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
