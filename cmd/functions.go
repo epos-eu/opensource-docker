@@ -22,9 +22,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/google/go-github/v52/github"
-	"github.com/hashicorp/go-version"
-	"github.com/jedib0t/go-pretty/v6/table"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -32,6 +29,10 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/google/go-github/v52/github"
+	"github.com/hashicorp/go-version"
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 const colorReset = "\033[0m"
@@ -102,6 +103,13 @@ func setupIPs() {
 	os.Setenv("LOCAL_IP", os.Getenv("API_HOST_ENV"))
 }
 
+func setupProvidedIPs(externalip string) {
+	os.Setenv("API_HOST", "http://"+externalip+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
+	os.Setenv("EXECUTE_HOST", "http://"+externalip+":"+os.Getenv("API_PORT"))
+	os.Setenv("HOST", "http://"+externalip+":"+os.Getenv("GUI_PORT"))
+	os.Setenv("LOCAL_IP", externalip)
+}
+
 func print_urls() {
 
 	fmt.Println(string(colorCyan), `Open Source Docker deploy
@@ -121,6 +129,7 @@ func print_urls() {
     Copyright (C) 2023  EPOS ERIC`, string(colorReset))
 	t := table.NewWriter()
 	t.SetTitle("EPOS ACCESS POINTS")
+	t.AppendRow(table.Row{"EPOS Data Portal", "http://" + os.Getenv("API_HOST_ENV") + ":" + os.Getenv("DATA_PORTAL_PORT")})
 	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("API_HOST_ENV") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
 	t.SetStyle(table.StyleColoredBlackOnGreenWhite)
 	fmt.Println(t.Render())
@@ -227,5 +236,5 @@ func getLastDockerImageTag(repo string) string {
 }
 
 func getVersion() string {
-	return "0.3.4"
+	return "0.4.0"
 }

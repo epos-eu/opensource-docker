@@ -19,11 +19,12 @@
 package cmd
 
 import (
-	"github.com/joho/godotenv"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/cobra"
 )
 
 var deployCmd = &cobra.Command{
@@ -32,6 +33,7 @@ var deployCmd = &cobra.Command{
 	Long:  `Deploy an enviroment with .env set up on docker`,
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
+		externalip, _ := cmd.Flags().GetString("externalip")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
 		autoupdate, _ := cmd.Flags().GetString("autoupdate")
 		isDefaultEnv := false
@@ -53,8 +55,11 @@ var deployCmd = &cobra.Command{
 		if autoupdate == "true" {
 			checkImagesUpdate()
 		}
-
-		setupIPs()
+		if externalip == "" {
+			setupIPs()
+		} else {
+			setupProvidedIPs(externalip)
+		}
 		printSetup(env, dockercomposefile)
 		command := exec.Command("docker-compose",
 			"-f",
@@ -72,7 +77,7 @@ var deployCmd = &cobra.Command{
 			os.Exit(0)
 		}
 		printTask("Installing rabbitmq container on the machine")
-		time.Sleep(8 * time.Second)
+		time.Sleep(15 * time.Second)
 		printTask("Installing all remaining containers on the machine")
 		command = exec.Command("docker-compose",
 			"-f",
@@ -87,7 +92,7 @@ var deployCmd = &cobra.Command{
 			printError("Creation of container failed, cause: " + err.Error())
 			os.Exit(0)
 		}
-		time.Sleep(20 * time.Second)
+		time.Sleep(30 * time.Second)
 		printTask("Restarting gateway")
 		command = exec.Command("docker-compose",
 			"-f",
@@ -108,6 +113,7 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	deployCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
+	deployCmd.Flags().String("externalip", "", "IP address used to expose the services, use automatically generated if not provided")
 	deployCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
 	deployCmd.Flags().String("autoupdate", "", "Auto update the images versions (true|false)")
 }

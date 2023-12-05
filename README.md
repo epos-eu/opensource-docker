@@ -59,11 +59,13 @@ Use "opensource-docker [command] --help" for more information about a command.
 Deploy an enviroment with .env set up on docker
 
 Usage:
-  opensource-docker deploy [flags]
+  epos-docker-cli deploy [flags]
 
 Flags:
+      --autoupdate string      Auto update the images versions (true|false)
       --dockercompose string   Docker compose file, use default if not provided
       --env string             Environment variable file, use default if not provided
+      --externalip string      IP address used to expose the services, use automatically generated if not provided
   -h, --help                   help for deploy
 ```
 
@@ -125,11 +127,6 @@ EPOS Data Portal:
 http://<your-ip>:<GUI_PORT><DEPLOY_PATH>
 ```
 
-EPOS Backoffice: 
-```
-http://<your-ip>:<BACKOFFICE_GUI_PORT><DEPLOY_PATH>
-```
-
 EPOS API Gateway: 
 ```
 http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
@@ -140,21 +137,20 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 
 | Name | Standard Value | Description |
 |--|--|--|
+| API_HOST_ENV | ${API_HOST_ENV} | API Host Environment IP provided by user, if not set is generated automatically using machine IP |
 | API_HOST | ${API_HOST} | API Host IP, if not set is generated automatically using machine IP |
 | EXECUTE_HOST | ${API_HOST} | Internal variable to setup redirections for the external access service, if not set is generated automatically using machine IP |
 | DEPLOY_PATH | / | Context path of the environment|
 | BASE_CONTEXT | empty value | Context path name of the environment (similar to DEPLOY_PATH but without the initial /) |
 | API_PATH | /api/v1 | API GATEWAY access path|
-| GUI_PORT | 8000 | Port used by EPOS Data Portal or other GUIs |
-| BACKOFFICE_GUI_PORT | 9000 | Port used by EPOS Backoffice UI or other Backoffice GUIs |
-| API_PORT | 8080 | Port used by EPOS API Gateway |
-| IS_MONITORING_AUTH | false | Variable used to protect monitoring endpoint via JWT |
-| IS_AAI_ENABLED | false | Variable used to protect backoffice endpoints via AAI service |
+| DATA_PORTAL_PORT | 32000 | Port used by EPOS Data Portal or other GUIs |
+| API_PORT | 33000 | Port used by EPOS API Gateway |
 
 ### RabbitMQ configuration
 
 | Name | Standard Value | Description |
 |--|--|--|
+| BROKER_HOST | rabbitmq | Name of the RabbitMQ container |
 | BROKER_USERNAME | changeme | RabbitMQ username |
 | BROKER_PASSWORD | changeme | RabbitMQ password |
 | BROKER_VHOST | changeme | RabbitMQ vhost |
@@ -163,10 +159,11 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 
 | Name | Standard Value | Description |
 |--|--|--|
+| POSTGRESQL_HOST | metadata-catalogue:5432 | Name and port of the metadata catalogue container |
 | POSTGRES_USER | postgres | Database user |
 | POSTGRESQL_PASSWORD | changeme | Database password |
 | POSTGRES_DB | cerif | Database name |
-| POSTGRESQL_CONNECTION_STRING | jdbc:postgresql://postgrescerif:5432/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD} | Database connection string based on previous configurations |
+| POSTGRESQL_CONNECTION_STRING | jdbc:postgresql:///${POSTGRESQL_HOST}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD} | Database connection string based on previous configurations |
 | PERSISTENCE_NAME | EPOSDataModel | Persistence Name of scientific metadata |
 | PERSISTENCE_NAME_PROCESSING | EPOSProcessing | Persistence Name of processing metadata |
 
@@ -210,7 +207,7 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | IS_AAI_ENABLED | false | |
 | SECURITY_KEY | empty | |
 | AAI_SERVICE_ENDPOINT | empty | |
-| FACETS_DEFAULT | false | |
+| FACETS_DEFAULT | true | |
 | FACETS_TYPE_DEFAULT | categories | |
 | REDIS_SERVER | redis-server | |
 | INGESTOR_HASH | 3F58A1895982CC81A2E5CEDA7DD9AC7009DF9998 | |
@@ -221,14 +218,15 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 |--|--|--|
 | MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
 | REDIS_IMAGE | redis | 7.0.11 |
-| GATEWAY_IMAGE | epos-api-gateway | 1.1.0 |
-| RESOURCES_SERVICE_IMAGE | resources-service | 1.3.2 |
-| INGESTOR_IMAGE | ingestor-service | 1.3.1 |
-| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.3.2 |
-| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.1.0 |
-| CONVERTER_IMAGE | converter-service | 1.1.5 |
-| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.3.17 |
-| METADATA_DB_IMAGE | metadata-database-deploy | 2.2.0 |
+| DATAPORTAL_IMAGE | data-portal | 1.0.0 |
+| GATEWAY_IMAGE | epos-api-gateway | 1.3.4 |
+| RESOURCES_SERVICE_IMAGE | resources-service | 1.4.1 |
+| INGESTOR_IMAGE | ingestor-service | 1.4.4 |
+| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.4.6 |
+| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.3.7 |
+| CONVERTER_IMAGE | converter-service | 1.2.1 |
+| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.7.5 |
+| METADATA_DB_IMAGE | metadata-database-deploy | 2.4.13 |
 
 ## Maintenance
 
