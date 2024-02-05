@@ -26,8 +26,8 @@ services:
       - epos_network
     restart: always
     environment:
-      - BASE_URL="/"
-      - API_HOST="http://gateway:5000/api/v1"
+      - BASE_URL=/
+      - API_HOST=http://gateway:5000/api
   gateway:
     image: "${DOCKER_REGISTRY}/${GATEWAY_IMAGE}"
     container_name: gateway

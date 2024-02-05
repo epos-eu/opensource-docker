@@ -92,12 +92,12 @@ func setupIPs() {
 
 	val, present := os.LookupEnv("API_HOST_ENV")
 	if present {
-		fmt.Print(val)
+		os.Setenv("API_HOST_ENV", val)
 	} else {
 		os.Setenv("API_HOST_ENV", localAddr.IP.String())
 	}
 
-	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
+	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+os.Getenv("API_PATH"))
 	os.Setenv("EXECUTE_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT"))
 	os.Setenv("HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("GUI_PORT"))
 	os.Setenv("LOCAL_IP", os.Getenv("API_HOST_ENV"))
@@ -236,5 +236,5 @@ func getLastDockerImageTag(repo string) string {
 }
 
 func getVersion() string {
-	return "0.4.0"
+	return "0.5.0"
 }
