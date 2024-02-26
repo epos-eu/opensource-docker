@@ -20,6 +20,7 @@ package cmd
 
 import (
 	_ "embed"
+
 	"github.com/spf13/cobra"
 )
 
@@ -46,6 +47,6 @@ var exportCmd = &cobra.Command{
 func init() {
 	exportCmd.Flags().String("file", "", "File to export, available options: [env, compose]")
 	exportCmd.MarkFlagRequired("file")
-	exportCmd.Flags().String("output", "", "Output folder")
+	exportCmd.Flags().String("output", "", "Full path utput folder")
 	exportCmd.MarkFlagRequired("output")
 }

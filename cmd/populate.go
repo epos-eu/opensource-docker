@@ -20,16 +20,18 @@ package cmd
 
 import (
 	_ "embed"
-	"github.com/joho/godotenv"
-	"github.com/spf13/cobra"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/cobra"
 )
 
 var populateCmd = &cobra.Command{
@@ -40,13 +42,36 @@ var populateCmd = &cobra.Command{
 
 		path, _ := cmd.Flags().GetString("folder")
 		env, _ := cmd.Flags().GetString("env")
+
+		envname, _ := cmd.Flags().GetString("envname")
+		envtag, _ := cmd.Flags().GetString("envtag")
+
+		envtagname := ""
+
+		if envname != "" {
+			envtagname += envname
+		}
+		if envtag != "" {
+			envtagname += envtag
+		}
+		if envtagname != "" {
+			envtagname += "-"
+		}
+		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
+		os.Setenv("PREFIX", envtagname)
+
+		dname := os.TempDir() + os.Getenv("PREFIX")
+
+		RemoveContents(dname)
+		createDirectory(dname)
+
 		fileInfo, err := os.Stat(path)
 		if err != nil {
 			printError("Loading file folder, cause: " + err.Error())
 			os.Exit(0)
 		}
 		if env == "" {
-			env = generateTempFile(configurations)
+			env = generateTempFile(dname, "configurations", configurations)
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
@@ -95,7 +120,7 @@ var populateCmd = &cobra.Command{
 					}
 					r.Header.Add("accept", "*/*")
 					r.Header.Add("path", "http://"+os.Getenv("LOCAL_IP")+":"+free_port_string+"/"+info.Name())
-					r.Header.Add("securityCode", "CodiceDiTest")
+					r.Header.Add("securityCode", "changeme")
 					r.Header.Add("type", "single")
 					r.Header.Add("model", "EPOS-DCAT-AP-V1")
 
@@ -158,4 +183,6 @@ func init() {
 	populateCmd.Flags().String("folder", "", "Fullpath folder where ttl files are located")
 	populateCmd.MarkFlagRequired("folder")
 	populateCmd.Flags().String("env", "", "Environment variable file")
+	populateCmd.Flags().String("envname", "", "Set name of the environment")
+	populateCmd.Flags().String("envtag", "", "Set tag of the environment")
 }

@@ -19,7 +19,7 @@ version: '3.7'
 services:
   dataportal:
     image: "${DOCKER_REGISTRY}/${DATAPORTAL_IMAGE}"
-    container_name: data-portal
+    container_name: ${PREFIX}data-portal
     ports:
       - "${DATA_PORTAL_PORT}:80"
     networks:
@@ -30,13 +30,14 @@ services:
       - API_HOST=http://gateway:5000/api
   gateway:
     image: "${DOCKER_REGISTRY}/${GATEWAY_IMAGE}"
-    container_name: gateway
+    container_name: ${PREFIX}gateway
     ports:
       - "${API_PORT}:5000"
     networks:
       - epos_network
     restart: always
     environment:
+      - PREFIX=${PREFIX}
       - BASECONTEXT=${BASE_CONTEXT}
       - LOAD_RESOURCES_API=${LOAD_RESOURCES_API}
       - LOAD_INGESTOR_API=${LOAD_INGESTOR_API}
@@ -55,7 +56,7 @@ services:
       - externalaccess
   rabbitmq:
     image: "${MESSAGE_BUS_IMAGE}"
-    container_name: rabbitmq
+    container_name: ${PREFIX}rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -69,21 +70,31 @@ services:
       - epos_network
   resources:
     image: "${DOCKER_REGISTRY}/${RESOURCES_SERVICE_IMAGE}"
-    container_name: resources-service
+    container_name: ${PREFIX}resources-service
     volumes:
       - resources:/resources
     networks:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=${BROKER_HOST}
-      - BROKER_USERNAME=${BROKER_USERNAME}
-      - BROKER_PASSWORD=${BROKER_PASSWORD}
-      - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
       - FACETS_DEFAULT=${FACETS_DEFAULT}
       - FACETS_TYPE_DEFAULT=${FACETS_TYPE_DEFAULT}
-      - REDIS_SERVER=${REDIS_SERVER}
+      - PERSISTENCE_NAME=${PERSISTENCE_NAME}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST}
+      - POSTGRESQL_DBNAME=${POSTGRES_DB}
+      - POSTGRESQL_USERNAME=${POSTGRES_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - APIHOST=${EXECUTE_HOST}
+      - APICONTEXT=${BASE_CONTEXT}${API_PATH}
+      - MONITORING=${MONITORING}
+      - MONITORING_URL=${MONITORING_URL}
+      - MONITORING_USER=${MONITORING_USER}
+      - MONITORING_PWD=${MONITORING_PWD}
+      - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
+      - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
+      - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/resources-service/v1/actuator/health"]
       interval: 1m30s
@@ -94,20 +105,19 @@ services:
       - rabbitmq
   backoffice:
     image: "${DOCKER_REGISTRY}/${BACKOFFICE_SERVICE_IMAGE}"
-    container_name: backoffice-service
+    container_name: ${PREFIX}backoffice-service
     volumes:
       - backoffice:/backoffice
     networks:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=${BROKER_HOST}
-      - BROKER_USERNAME=${BROKER_USERNAME}
-      - BROKER_PASSWORD=${BROKER_PASSWORD}
-      - BROKER_VHOST=${BROKER_VHOST}
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
-      - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
       - BASECONTEXT=${BASE_CONTEXT}
+      - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
+      - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
+      - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/backoffice-service/v1/actuator/health"]
       interval: 1m30s
@@ -118,25 +128,24 @@ services:
       - rabbitmq
   ingestor:
     image: "${DOCKER_REGISTRY}/${INGESTOR_IMAGE}"
-    container_name: ingestor-service
+    container_name: ${PREFIX}ingestor-service
     volumes:
       - ingestor:/ingestor
     networks:
       - epos_network
     restart: always
     environment:
-      - BROKER_HOST=${BROKER_HOST}
-      - BROKER_USERNAME=${BROKER_USERNAME}
-      - BROKER_PASSWORD=${BROKER_PASSWORD}
-      - BROKER_VHOST=${BROKER_VHOST}
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
-      - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_HOST=${POSTGRESQL_HOST}
       - POSTGRESQL_DBNAME=${POSTGRES_DB}
       - POSTGRESQL_USERNAME=${POSTGRES_USER}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
       - INGESTOR_HASH=${INGESTOR_HASH}
       - BASECONTEXT=${BASE_CONTEXT}
+      - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
+      - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
+      - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/ingestor-service/v1/actuator/health"]
       interval: 1m30s
@@ -147,7 +156,7 @@ services:
       - rabbitmq
   externalaccess:
     image: "${DOCKER_REGISTRY}/${EXTERNAL_ACCESS_IMAGE}"
-    container_name: external-access-service
+    container_name: ${PREFIX}external-access-service
     volumes:
       - externalaccess:/externalaccess
     networks:
@@ -159,7 +168,17 @@ services:
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
       - BASECONTEXT=${BASE_CONTEXT}
-      - REDIS_SERVER=${REDIS_SERVER}
+      - PERSISTENCE_NAME=${PERSISTENCE_NAME}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST}
+      - POSTGRESQL_DBNAME=${POSTGRES_DB}
+      - POSTGRESQL_USERNAME=${POSTGRES_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - APIHOST=${EXECUTE_HOST}
+      - APICONTEXT=${BASE_CONTEXT}${API_PATH}
+      - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
+      - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
+      - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/external-access-service/v1/actuator/health"]
       interval: 1m30s
@@ -170,7 +189,7 @@ services:
       - rabbitmq
   converter:
     image: "${DOCKER_REGISTRY}/${CONVERTER_IMAGE}"
-    container_name: converter-service
+    container_name: ${PREFIX}converter-service
     volumes:
       - converter:/converter
     networks:
@@ -181,66 +200,27 @@ services:
       - BROKER_USERNAME=${BROKER_USERNAME}
       - BROKER_PASSWORD=${BROKER_PASSWORD}
       - BROKER_VHOST=${BROKER_VHOST}
-    depends_on:
-      - rabbitmq
-  datametadataservice:
-    image: "${DOCKER_REGISTRY}/${DATA_METADATA_SERVICE_IMAGE}"
-    container_name: datametadataservice
-    volumes:
-      - datametadataservice:/datametadataservice
-    networks:
-      - epos_network
-    restart: always
-    environment:
-      - BROKER_HOST=${BROKER_HOST}
-      - BROKER_USERNAME=${BROKER_USERNAME}
-      - BROKER_PASSWORD=${BROKER_PASSWORD}
-      - BROKER_VHOST=${BROKER_VHOST}
       - PERSISTENCE_NAME=${PERSISTENCE_NAME}
-      - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
       - POSTGRESQL_HOST=${POSTGRESQL_HOST}
       - POSTGRESQL_DBNAME=${POSTGRES_DB}
       - POSTGRESQL_USERNAME=${POSTGRES_USER}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
-      - APIHOST=${EXECUTE_HOST}
-      - APICONTEXT=${BASE_CONTEXT}${API_PATH}
-      - MONITORING=${MONITORING}
-      - MONITORING_URL=${MONITORING_URL}
-      - MONITORING_USER=${MONITORING_USER}
-      - MONITORING_PWD=${MONITORING_PWD}
-      - NUM_OF_PUBLISHERS=${NUM_OF_PUBLISHERS}
-      - NUM_OF_CONSUMERS=${NUM_OF_CONSUMERS}
       - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     depends_on:
       - rabbitmq
   metadatacatalogue:
     restart: always
     image: "${DOCKER_REGISTRY}/${METADATA_DB_IMAGE}"
-    container_name: metadata-catalogue
+    container_name: ${PREFIX}metadata-catalogue
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - psqldata:/var/lib/postgresql
-    depends_on:
-      - rabbitmq
-    networks:
-      - epos_network
-  redis:
-    restart: always
-    image: "${REDIS_IMAGE}"
-    container_name: redis-server
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
     depends_on:
       - rabbitmq
     networks:
@@ -258,11 +238,8 @@ volumes:
     external: false
   converter:
     external: false
-  datametadataservice:
-    external: false
-  processingaccessservice:
-    external: false
   psqldata:
     external: false
 networks:
   epos_network:
+    name: ${PREFIX}

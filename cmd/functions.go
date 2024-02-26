@@ -142,8 +142,9 @@ func printTask(message string) {
 	fmt.Println(string(colorGreen), "[TASK] "+message, string(colorReset))
 }
 
-func generateTempFile(text []byte) string {
-	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-", filepath.Base(os.Args[0])))
+func generateTempFile(dname string, filetype string, text []byte) string {
+
+	tmpFile, err := ioutil.TempFile(dname, filetype)
 	if err != nil {
 		printError("Could not create temporary file, cause " + err.Error())
 		os.Exit(0)
@@ -154,7 +155,37 @@ func generateTempFile(text []byte) string {
 		printError("Unable to write to temporary file, cause " + err.Error())
 		os.Exit(0)
 	}
+	fmt.Println(name)
+
 	return name
+}
+
+func createDirectory(dir string) error {
+	err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0755)
+	if err != nil {
+		printError("Could not create temporary folder, cause " + err.Error())
+	}
+	fmt.Println("Temp dir name:", dir)
+	return nil
+}
+
+func RemoveContents(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func generateFile(text []byte, filePath string) {
@@ -236,5 +267,5 @@ func getLastDockerImageTag(repo string) string {
 }
 
 func getVersion() string {
-	return "0.5.0"
+	return "1.0.0"
 }

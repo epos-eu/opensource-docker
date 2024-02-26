@@ -21,6 +21,7 @@ package cmd
 import (
 	"os"
 	"os/exec"
+	"regexp"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -36,18 +37,42 @@ var deployCmd = &cobra.Command{
 		externalip, _ := cmd.Flags().GetString("externalip")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
 		autoupdate, _ := cmd.Flags().GetString("autoupdate")
+		envname, _ := cmd.Flags().GetString("envname")
+		envtag, _ := cmd.Flags().GetString("envtag")
+
+		envtagname := ""
+
+		if envname != "" {
+			envtagname += envname
+		}
+		if envtag != "" {
+			envtagname += envtag
+		}
+		if envtagname != "" {
+			envtagname += "-"
+		}
+		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
+		os.Setenv("PREFIX", envtagname)
+
+		dname := os.TempDir() + os.Getenv("PREFIX")
+
+		RemoveContents(dname)
+		createDirectory(dname)
+
 		isDefaultEnv := false
 		if env == "" {
-			env = generateTempFile(configurations)
+			env = generateTempFile(dname, "configurations", configurations)
 			isDefaultEnv = true
 		}
+
 		if dockercomposefile == "" {
-			dockercomposefile = generateTempFile(dockercompose)
+			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
 			os.Exit(0)
 		}
+
 		if isDefaultEnv {
 			checkImagesUpdate()
 		}
@@ -60,7 +85,9 @@ var deployCmd = &cobra.Command{
 		} else {
 			setupProvidedIPs(externalip)
 		}
+
 		printSetup(env, dockercomposefile)
+
 		command := exec.Command("docker-compose",
 			"-f",
 			dockercomposefile,
@@ -115,5 +142,7 @@ func init() {
 	deployCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
 	deployCmd.Flags().String("externalip", "", "IP address used to expose the services, use automatically generated if not provided")
 	deployCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
+	deployCmd.Flags().String("envname", "", "Set name of the environment")
+	deployCmd.Flags().String("envtag", "", "Set tag of the environment")
 	deployCmd.Flags().String("autoupdate", "", "Auto update the images versions (true|false)")
 }

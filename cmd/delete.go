@@ -20,10 +20,12 @@ package cmd
 
 import (
 	_ "embed"
-	"github.com/joho/godotenv"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
+	"regexp"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/cobra"
 )
 
 var deleteCmd = &cobra.Command{
@@ -33,13 +35,36 @@ var deleteCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		env, _ := cmd.Flags().GetString("env")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
+		envname, _ := cmd.Flags().GetString("envname")
+		envtag, _ := cmd.Flags().GetString("envtag")
 		isDefaultEnv := false
+
+		envtagname := ""
+
+		if envname != "" {
+			envtagname += envname
+		}
+		if envtag != "" {
+			envtagname += envtag
+		}
+		if envtagname != "" {
+			envtagname += "-"
+		}
+		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
+
+		os.Setenv("PREFIX", envtagname)
+
+		dname := os.TempDir() + os.Getenv("PREFIX")
+
+		RemoveContents(dname)
+		createDirectory(dname)
+
 		if env == "" {
-			env = generateTempFile(configurations)
+			env = generateTempFile(dname, "configurations", configurations)
 			isDefaultEnv = true
 		}
 		if dockercomposefile == "" {
-			dockercomposefile = generateTempFile(dockercompose)
+			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Error loading env variables from " + env + " cause: " + err.Error())
@@ -48,7 +73,9 @@ var deleteCmd = &cobra.Command{
 		if isDefaultEnv {
 			checkImagesUpdate()
 		}
+
 		setupIPs()
+
 		printSetup(env, dockercomposefile)
 		command := exec.Command("docker-compose",
 			"-f",
@@ -68,4 +95,6 @@ var deleteCmd = &cobra.Command{
 func init() {
 	deleteCmd.Flags().String("env", "", "Environment variable file, use default if not provided")
 	deleteCmd.Flags().String("dockercompose", "", "Docker compose file, use default if not provided")
+	deleteCmd.Flags().String("envname", "", "Set name of the environment")
+	deleteCmd.Flags().String("envtag", "", "Set tag of the environment")
 }
