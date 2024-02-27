@@ -70,7 +70,7 @@ var deployCmd = &cobra.Command{
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
-			os.Exit(0)
+
 		}
 
 		if isDefaultEnv {
@@ -101,7 +101,7 @@ var deployCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of rabbitmq container failed, cause: " + err.Error())
-			os.Exit(0)
+
 		}
 		printTask("Installing rabbitmq container on the machine")
 		time.Sleep(15 * time.Second)
@@ -117,7 +117,7 @@ var deployCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of container failed, cause: " + err.Error())
-			os.Exit(0)
+
 		}
 		time.Sleep(30 * time.Second)
 		printTask("Restarting gateway")
@@ -131,7 +131,7 @@ var deployCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of container failed, cause: " + err.Error())
-			os.Exit(0)
+
 		}
 		time.Sleep(5 * time.Second)
 		print_urls()

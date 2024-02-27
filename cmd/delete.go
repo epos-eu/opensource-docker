@@ -68,7 +68,7 @@ var deleteCmd = &cobra.Command{
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Error loading env variables from " + env + " cause: " + err.Error())
-			os.Exit(0)
+
 		}
 		if isDefaultEnv {
 			checkImagesUpdate()
@@ -86,7 +86,7 @@ var deleteCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Error deleting environment, cause: " + err.Error())
-			os.Exit(0)
+
 		}
 
 	},

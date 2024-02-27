@@ -84,7 +84,7 @@ func setupIPs() {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		printError("Dial udp 8.8.8.8:80")
-		os.Exit(0)
+
 	}
 	defer conn.Close()
 
@@ -147,13 +147,13 @@ func generateTempFile(dname string, filetype string, text []byte) string {
 	tmpFile, err := ioutil.TempFile(dname, filetype)
 	if err != nil {
 		printError("Could not create temporary file, cause " + err.Error())
-		os.Exit(0)
+
 	}
 	defer tmpFile.Close()
 	name := tmpFile.Name()
 	if _, err = tmpFile.Write(text); err != nil {
 		printError("Unable to write to temporary file, cause " + err.Error())
-		os.Exit(0)
+
 	}
 	fmt.Println(name)
 
@@ -192,7 +192,7 @@ func generateFile(text []byte, filePath string) {
 	err := ioutil.WriteFile(filePath, text, 0777)
 	if err != nil {
 		printError("Could not create file, cause " + err.Error())
-		os.Exit(0)
+
 	}
 }
 
@@ -201,7 +201,7 @@ func getLastTag() {
 	tags, _, err := client.Repositories.ListTags(context.Background(), "epos-eu", "opensource-docker", nil)
 	if err != nil {
 		printError("Could not retrieve tags of the repository, cause " + err.Error())
-		os.Exit(0)
+
 	}
 	if len(tags) > 0 {
 		latestTag := tags[0]
@@ -259,7 +259,7 @@ func getLastDockerImageTag(repo string) string {
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/" + namespace + "/" + repo + "/tags?page_size=2")
 	if err != nil {
 		printError("Can't retrieve tags from dockerhub")
-		os.Exit(0)
+
 	}
 	json.NewDecoder(resp.Body).Decode(&response)
 	defer resp.Body.Close()

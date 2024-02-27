@@ -68,14 +68,13 @@ var populateCmd = &cobra.Command{
 		fileInfo, err := os.Stat(path)
 		if err != nil {
 			printError("Loading file folder, cause: " + err.Error())
-			os.Exit(0)
 		}
 		if env == "" {
 			env = generateTempFile(dname, "configurations", configurations)
 		}
 		if err := godotenv.Load(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
-			os.Exit(0)
+
 		}
 		freePortOk := false
 		free_port, err := GetFreePort()
@@ -104,7 +103,6 @@ var populateCmd = &cobra.Command{
 			command.Stderr = os.Stderr
 			if err := command.Run(); err != nil {
 				printError("Creating metadata-cache container, cause " + err.Error())
-				os.Exit(0)
 			}
 
 			filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
@@ -128,7 +126,7 @@ var populateCmd = &cobra.Command{
 					res, err := client.Do(r)
 					if err != nil {
 						printError("Ingestion failed, cause " + err.Error())
-						os.Exit(0)
+
 					}
 					defer res.Body.Close()
 				}
@@ -142,11 +140,11 @@ var populateCmd = &cobra.Command{
 			command.Stderr = os.Stderr
 			if err := command.Run(); err != nil {
 				printError("Deleting metadata-cache container, cause " + err.Error())
-				os.Exit(0)
+
 			}
 		} else {
 			printError("You need to define a folder!")
-			os.Exit(0)
+
 		}
 		command := exec.Command("docker",
 			"exec",
@@ -157,7 +155,7 @@ var populateCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Flushing redis container, cause " + err.Error())
-			os.Exit(0)
+
 		}
 		print_urls()
 	},
@@ -167,13 +165,13 @@ func GetFreePort() (int, error) {
 	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
 	if err != nil {
 		printError("Resolve TCPAddr, cause " + err.Error())
-		os.Exit(0)
+
 	}
 
 	l, err := net.ListenTCP("tcp", addr)
 	if err != nil {
 		printError("Listening TCPAddr, cause " + err.Error())
-		os.Exit(0)
+
 	}
 	defer l.Close()
 	return l.Addr().(*net.TCPAddr).Port, nil
