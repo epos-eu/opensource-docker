@@ -68,7 +68,7 @@ var deployCmd = &cobra.Command{
 		if dockercomposefile == "" {
 			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
 		}
-		if err := godotenv.Load(env); err != nil {
+		if err := godotenv.Overload(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
 
 		}

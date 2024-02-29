@@ -66,7 +66,7 @@ var deleteCmd = &cobra.Command{
 		if dockercomposefile == "" {
 			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
 		}
-		if err := godotenv.Load(env); err != nil {
+		if err := godotenv.Overload(env); err != nil {
 			printError("Error loading env variables from " + env + " cause: " + err.Error())
 
 		}

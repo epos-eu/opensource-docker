@@ -72,7 +72,7 @@ var populateCmd = &cobra.Command{
 		if env == "" {
 			env = generateTempFile(dname, "configurations", configurations)
 		}
-		if err := godotenv.Load(env); err != nil {
+		if err := godotenv.Overload(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
 
 		}
