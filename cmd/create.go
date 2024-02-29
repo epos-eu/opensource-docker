@@ -88,6 +88,8 @@ var deployCmd = &cobra.Command{
 
 		printSetup(env, dockercomposefile)
 
+		printTask("Installing rabbitmq container on the machine")
+
 		command := exec.Command("docker-compose",
 			"-f",
 			dockercomposefile,
@@ -99,11 +101,11 @@ var deployCmd = &cobra.Command{
 
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
+
 		if err := command.Run(); err != nil {
 			printError("Creation of rabbitmq container failed, cause: " + err.Error())
 
 		}
-		printTask("Installing rabbitmq container on the machine")
 		time.Sleep(15 * time.Second)
 		printTask("Installing all remaining containers on the machine")
 		command = exec.Command("docker-compose",
@@ -113,13 +115,15 @@ var deployCmd = &cobra.Command{
 			"up",
 			"-d",
 			"--build")
+
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of container failed, cause: " + err.Error())
 
 		}
-		time.Sleep(30 * time.Second)
+		printWait("Waiting for the containers to be up and running...")
+		time.Sleep(40 * time.Second)
 		printTask("Restarting gateway")
 		command = exec.Command("docker-compose",
 			"-f",

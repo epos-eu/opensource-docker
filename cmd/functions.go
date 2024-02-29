@@ -27,6 +27,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,6 +91,8 @@ func setupIPs() {
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
+	ports := [2]string{"API_PORT", "DATA_PORTAL_PORT"}
+
 	val, present := os.LookupEnv("API_HOST_ENV")
 	if present {
 		os.Setenv("API_HOST_ENV", val)
@@ -97,16 +100,34 @@ func setupIPs() {
 		os.Setenv("API_HOST_ENV", localAddr.IP.String())
 	}
 
+	for i := 0; i < len(ports); i++ {
+		printNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
+		isPortAvailable, err := isPortAvailable(os.Getenv(ports[i]))
+		if err != nil {
+			printError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
+		}
+		if isPortAvailable {
+			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+		} else {
+			port, err := getAvailablePort()
+			if err != nil {
+				printError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
+			}
+			os.Setenv(ports[i], port)
+			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+		}
+	}
+
 	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+os.Getenv("API_PATH"))
 	os.Setenv("EXECUTE_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT"))
-	os.Setenv("HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("GUI_PORT"))
+	os.Setenv("HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("DATA_PORTAL_PORT"))
 	os.Setenv("LOCAL_IP", os.Getenv("API_HOST_ENV"))
 }
 
 func setupProvidedIPs(externalip string) {
 	os.Setenv("API_HOST", "http://"+externalip+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
 	os.Setenv("EXECUTE_HOST", "http://"+externalip+":"+os.Getenv("API_PORT"))
-	os.Setenv("HOST", "http://"+externalip+":"+os.Getenv("GUI_PORT"))
+	os.Setenv("HOST", "http://"+externalip+":"+os.Getenv("DATA_PORTAL_PORT"))
 	os.Setenv("LOCAL_IP", externalip)
 }
 
@@ -141,31 +162,43 @@ func printError(message string) {
 func printTask(message string) {
 	fmt.Println(string(colorGreen), "[TASK] "+message, string(colorReset))
 }
+func printWait(message string) {
+	fmt.Println(string(colorYellow), "[WAITING] "+message, string(colorReset))
+}
+func printNotification(message string) {
+	fmt.Println(string(colorPurple), "[NOTIFICATION] "+message, string(colorReset))
+}
+func printNewVersionAvailable(message string) {
+	fmt.Println(string(colorYellow), "[NEW VERSION AVAILABLE] "+message, string(colorReset))
+}
 
 func generateTempFile(dname string, filetype string, text []byte) string {
 
 	tmpFile, err := ioutil.TempFile(dname, filetype)
 	if err != nil {
-		printError("Could not create temporary file, cause " + err.Error())
+		printError("Could not create temporary file, cause " + err.Error() + " error: " + err.Error())
 
 	}
 	defer tmpFile.Close()
 	name := tmpFile.Name()
 	if _, err = tmpFile.Write(text); err != nil {
-		printError("Unable to write to temporary file, cause " + err.Error())
-
+		printError("Unable to write to temporary file, cause " + err.Error() + " error: " + err.Error())
 	}
-	fmt.Println(name)
+	printNotification("File " + name + " created successfully")
 
 	return name
 }
 
 func createDirectory(dir string) error {
-	err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0755)
-	if err != nil {
-		printError("Could not create temporary folder, cause " + err.Error())
+	if _, err := os.Stat(os.TempDir() + os.Getenv("PREFIX")); os.IsNotExist(err) {
+		err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0755)
+		if err != nil {
+			printError("Could not create temporary folder, cause " + err.Error() + " error: " + err.Error())
+		}
+		printTask("Directory" + dir + " created successfully")
+	} else {
+		printNotification("Directory " + dir + " already exists, using it")
 	}
-	fmt.Println("Temp dir name:", dir)
 	return nil
 }
 
@@ -209,7 +242,7 @@ func getLastTag() {
 		v1, _ := version.NewVersion(currentVersion)
 		v2, _ := version.NewVersion(latestTag.GetName())
 		if v1.LessThan(v2) {
-			fmt.Println(string(colorPurple), "New version available "+v1.String()+" ---> "+v2.String(), string(colorReset))
+			printNewVersionAvailable(v1.String() + " ---> " + v2.String())
 		}
 	}
 }
@@ -258,7 +291,7 @@ func getLastDockerImageTag(repo string) string {
 	namespace := "epos"
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/" + namespace + "/" + repo + "/tags?page_size=2")
 	if err != nil {
-		printError("Can't retrieve tags from dockerhub")
+		printError("Can't retrieve tags from dockerhub, error: " + err.Error())
 
 	}
 	json.NewDecoder(resp.Body).Decode(&response)
@@ -266,6 +299,44 @@ func getLastDockerImageTag(repo string) string {
 	return response.Results[1].Name
 }
 
+func isPortAvailable(port string) (bool, error) {
+	// Validate the string
+	portInt, err := strconv.Atoi(port)
+	if err != nil || portInt < 1 || portInt > 65535 {
+		return false, err
+	}
+	// Try to listen on the port
+	ln, err := net.Dial("tcp", "localhost:"+port)
+	if err != nil {
+		return true, nil
+	}
+	defer ln.Close()
+
+	return false, nil
+}
+
+// Get the available port
+func getAvailablePort() (string, error) {
+	// TODO: make this more efficient
+	const maxAttempts = 10
+	for i := 0; i < maxAttempts; i++ {
+		// Try to listen on the port, 0 means a port number is automatically chosen
+		ln, err := net.Listen("tcp", ":0")
+		if err != nil {
+			return "", err
+		}
+		defer ln.Close()
+
+		// Get the port from the listener
+		addr := ln.Addr().String() // "ip:port"
+		parts := strings.Split(addr, ":")
+		port := parts[len(parts)-1]
+		return port, nil
+	}
+
+	return "", fmt.Errorf("could not find an available port")
+}
+
 func getVersion() string {
-	return "1.0.0"
+	return "1.0.1"
 }

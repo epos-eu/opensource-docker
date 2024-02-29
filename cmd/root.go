@@ -20,7 +20,6 @@ package cmd
 
 import (
 	_ "embed"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -45,7 +44,7 @@ func Execute() {
 	getLastTag()
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		printError("Error on executing rootCMD, cause: " + err.Error())
 	}
 }
 
