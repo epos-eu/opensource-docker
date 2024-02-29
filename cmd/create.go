@@ -32,7 +32,7 @@ var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploy an environment on docker",
 	Long:  `Deploy an enviroment with .env set up on docker`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		env, _ := cmd.Flags().GetString("env")
 		externalip, _ := cmd.Flags().GetString("externalip")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
@@ -56,34 +56,53 @@ var deployCmd = &cobra.Command{
 
 		dname := os.TempDir() + os.Getenv("PREFIX")
 
-		RemoveContents(dname)
-		createDirectory(dname)
+		if err := RemoveContents(dname); err != nil {
+			printError("Error on removing the content from directory " + err.Error())
+			return err
+		}
+		if err := createDirectory(dname); err != nil {
+			printError("Error on creating the directory " + err.Error())
+			return err
+		}
 
 		isDefaultEnv := false
 		if env == "" {
-			env = generateTempFile(dname, "configurations", configurations)
+			ret_env, err := generateTempFile(dname, "configurations", configurations)
+			if err != nil {
+				return err
+			}
+			env = ret_env
 			isDefaultEnv = true
 		}
 
 		if dockercomposefile == "" {
-			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
+			ret_dockercomposefile, err := generateTempFile(dname, "dockercompose", dockercompose)
+			if err != nil {
+				return err
+			}
+			dockercomposefile = ret_dockercomposefile
 		}
 		if err := godotenv.Overload(env); err != nil {
 			printError("Loading env variables from " + env + " cause: " + err.Error())
-
+			return err
 		}
 
-		if isDefaultEnv {
-			checkImagesUpdate()
-		}
-
-		if autoupdate == "true" {
-			checkImagesUpdate()
+		if autoupdate == "true" || isDefaultEnv {
+			if err := checkImagesUpdate(); err != nil {
+				printError("Error on updating the docker container images " + err.Error())
+				return err
+			}
 		}
 		if externalip == "" {
-			setupIPs()
+			if err := setupIPs(); err != nil {
+				printError("Error on setting the IPs " + err.Error())
+				return err
+			}
 		} else {
-			setupProvidedIPs(externalip)
+			if err := setupProvidedIPs(externalip); err != nil {
+				printError("Error on setting the IPs using the provided IP " + err.Error())
+				return err
+			}
 		}
 
 		printSetup(env, dockercomposefile)
@@ -104,7 +123,7 @@ var deployCmd = &cobra.Command{
 
 		if err := command.Run(); err != nil {
 			printError("Creation of rabbitmq container failed, cause: " + err.Error())
-
+			return err
 		}
 		time.Sleep(15 * time.Second)
 		printTask("Installing all remaining containers on the machine")
@@ -120,7 +139,7 @@ var deployCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of container failed, cause: " + err.Error())
-
+			return err
 		}
 		printWait("Waiting for the containers to be up and running...")
 		time.Sleep(40 * time.Second)
@@ -135,10 +154,11 @@ var deployCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Creation of container failed, cause: " + err.Error())
-
+			return err
 		}
 		time.Sleep(5 * time.Second)
 		print_urls()
+		return nil
 	},
 }
 

@@ -28,19 +28,26 @@ var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export configuration files in output folder, options: [env, compose]",
 	Long:  `Export configuration files for customization in output folder, options: [env, compose]`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		file, _ := cmd.Flags().GetString("file")
 		output, _ := cmd.Flags().GetString("output")
 
 		switch file {
 		case "env":
-			generateFile(configurations, output+"/configurations.env")
+			if err := generateFile(configurations, output+"/configurations.env"); err != nil {
+				printError("Error on generating file ENV, cause: " + err.Error())
+				return err
+			}
 		case "compose":
-			generateFile(dockercompose, output+"/docker-compose.yaml")
+			if err := generateFile(dockercompose, output+"/docker-compose.yaml"); err != nil {
+				printError("Error on generating file DOCKER-COMPOSE, cause: " + err.Error())
+				return err
+			}
 		default:
 			printError("Invalid option, available options: [env, compose]")
 		}
+		return nil
 	},
 }
 

@@ -32,7 +32,7 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete an environment on docker",
 	Long:  `Delete an enviroment with .env set up on docker`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		env, _ := cmd.Flags().GetString("env")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
 		envname, _ := cmd.Flags().GetString("envname")
@@ -56,19 +56,34 @@ var deleteCmd = &cobra.Command{
 
 		dname := os.TempDir() + os.Getenv("PREFIX")
 
-		RemoveContents(dname)
-		createDirectory(dname)
+		if err := RemoveContents(dname); err != nil {
+			printError("Error on removing the content from directory " + err.Error())
+			return err
+		}
+		if err := createDirectory(dname); err != nil {
+			printError("Error on creating the directory " + err.Error())
+			return err
+		}
 
 		if env == "" {
-			env = generateTempFile(dname, "configurations", configurations)
+			ret_env, err := generateTempFile(dname, "configurations", configurations)
+			if err != nil {
+				return err
+			}
+			env = ret_env
 			isDefaultEnv = true
 		}
+
 		if dockercomposefile == "" {
-			dockercomposefile = generateTempFile(dname, "dockercompose", dockercompose)
+			ret_dockercomposefile, err := generateTempFile(dname, "dockercompose", dockercompose)
+			if err != nil {
+				return err
+			}
+			dockercomposefile = ret_dockercomposefile
 		}
 		if err := godotenv.Overload(env); err != nil {
 			printError("Error loading env variables from " + env + " cause: " + err.Error())
-
+			return err
 		}
 		if isDefaultEnv {
 			checkImagesUpdate()
@@ -86,9 +101,9 @@ var deleteCmd = &cobra.Command{
 		command.Stderr = os.Stderr
 		if err := command.Run(); err != nil {
 			printError("Error deleting environment, cause: " + err.Error())
-
+			return err
 		}
-
+		return nil
 	},
 }
 
