@@ -228,20 +228,24 @@ func createDirectory(dir string) error {
 }
 
 func RemoveContents(dir string) error {
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return err
-	}
-	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
+	if _, err := os.Stat(os.TempDir() + os.Getenv("PREFIX")); err == nil {
+		d, err := os.Open(dir)
 		if err != nil {
 			return err
 		}
+		defer d.Close()
+		names, err := d.Readdirnames(-1)
+		if err != nil {
+			return err
+		}
+		for _, name := range names {
+			err = os.RemoveAll(filepath.Join(dir, name))
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		printNotification("Directory " + dir + " already exists, using it")
 	}
 	return nil
 }
@@ -360,5 +364,5 @@ func getAvailablePort() (string, error) {
 }
 
 func getVersion() string {
-	return "1.0.2"
+	return "1.0.5"
 }

@@ -40,6 +40,16 @@ var rootCmd = &cobra.Command{
 	Long:    `EPOS Open Source CLI installer to deploy the EPOS System using docker-compose`,
 }
 
+func ExecuteStandAlone() error {
+	getLastTag()
+	err := rootCmd.Execute()
+	if err != nil {
+		printError("Error on executing rootCMD, cause: " + err.Error())
+		return err
+	}
+	return nil
+}
+
 func Execute(args []string) error {
 	getLastTag()
 	if args != nil {
