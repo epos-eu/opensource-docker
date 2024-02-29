@@ -18,7 +18,7 @@
 
 package main
 
-import "cli-open-source/cmd"
+import "github.com/epos-eu/opensource-docker/cmd"
 
 func main() {
 	cmd.ExecuteStandAlone()
