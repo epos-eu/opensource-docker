@@ -338,5 +338,5 @@ func getAvailablePort() (string, error) {
 }
 
 func getVersion() string {
-	return "1.0.1"
+	return "1.0.2"
 }
