@@ -81,6 +81,37 @@ type Response struct {
 	} `json:"results"`
 }
 
+func overridePorts(update string) error {
+
+	if update == "true" {
+		printNotification("No ports check needed, update=true")
+		return nil
+	} else {
+		ports := [2]string{"API_PORT", "DATA_PORTAL_PORT"}
+
+		for i := 0; i < len(ports); i++ {
+			printNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
+			isPortAvailable, err := isPortAvailable(os.Getenv(ports[i]))
+			if err != nil {
+				printError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
+				return err
+			}
+			if isPortAvailable {
+				printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+			} else {
+				port, err := getAvailablePort()
+				if err != nil {
+					printError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
+					return err
+				}
+				os.Setenv(ports[i], port)
+				printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+			}
+		}
+	}
+	return nil
+}
+
 func setupIPs() error {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
@@ -91,33 +122,11 @@ func setupIPs() error {
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	ports := [2]string{"API_PORT", "DATA_PORTAL_PORT"}
-
 	val, present := os.LookupEnv("API_HOST_ENV")
 	if present {
 		os.Setenv("API_HOST_ENV", val)
 	} else {
 		os.Setenv("API_HOST_ENV", localAddr.IP.String())
-	}
-
-	for i := 0; i < len(ports); i++ {
-		printNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
-		isPortAvailable, err := isPortAvailable(os.Getenv(ports[i]))
-		if err != nil {
-			printError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
-			return err
-		}
-		if isPortAvailable {
-			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
-		} else {
-			port, err := getAvailablePort()
-			if err != nil {
-				printError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
-				return err
-			}
-			os.Setenv(ports[i], port)
-			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
-		}
 	}
 
 	os.Setenv("API_HOST", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+os.Getenv("API_PATH"))
@@ -128,26 +137,6 @@ func setupIPs() error {
 }
 
 func setupProvidedIPs(externalip string) error {
-	ports := [2]string{"API_PORT", "DATA_PORTAL_PORT"}
-	for i := 0; i < len(ports); i++ {
-		printNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
-		isPortAvailable, err := isPortAvailable(os.Getenv(ports[i]))
-		if err != nil {
-			printError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
-			return err
-		}
-		if isPortAvailable {
-			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
-		} else {
-			port, err := getAvailablePort()
-			if err != nil {
-				printError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
-				return err
-			}
-			os.Setenv(ports[i], port)
-			printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
-		}
-	}
 	os.Setenv("API_HOST", "http://"+externalip+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
 	os.Setenv("EXECUTE_HOST", "http://"+externalip+":"+os.Getenv("API_PORT"))
 	os.Setenv("HOST", "http://"+externalip+":"+os.Getenv("DATA_PORTAL_PORT"))

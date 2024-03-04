@@ -37,8 +37,13 @@ var deployCmd = &cobra.Command{
 		externalip, _ := cmd.Flags().GetString("externalip")
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
 		autoupdate, _ := cmd.Flags().GetString("autoupdate")
+		update, _ := cmd.Flags().GetString("update")
 		envname, _ := cmd.Flags().GetString("envname")
 		envtag, _ := cmd.Flags().GetString("envtag")
+
+		if update != "true" && update != "false" {
+			update = "false"
+		}
 
 		envtagname := ""
 
@@ -93,6 +98,11 @@ var deployCmd = &cobra.Command{
 				return err
 			}
 		}
+		if err := overridePorts(update); err != nil {
+			printError("Error during overriding ports if update=true " + err.Error())
+			return err
+		}
+
 		if externalip == "" {
 			if err := setupIPs(); err != nil {
 				printError("Error on setting the IPs " + err.Error())
@@ -169,4 +179,5 @@ func init() {
 	deployCmd.Flags().String("envname", "", "Set name of the environment")
 	deployCmd.Flags().String("envtag", "", "Set tag of the environment")
 	deployCmd.Flags().String("autoupdate", "", "Auto update the images versions (true|false)")
+	deployCmd.Flags().String("update", "", "Update of an existing deployment (true|false), default false")
 }
