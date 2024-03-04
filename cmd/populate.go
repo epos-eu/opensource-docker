@@ -20,16 +20,8 @@ package cmd
 
 import (
 	_ "embed"
-	"net"
-	"net/http"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
-	"strconv"
-	"strings"
 
-	"github.com/joho/godotenv"
+	"github.com/epos-eu/opensource-docker/cmd/methods"
 	"github.com/spf13/cobra"
 )
 
@@ -44,155 +36,11 @@ var populateCmd = &cobra.Command{
 
 		envname, _ := cmd.Flags().GetString("envname")
 		envtag, _ := cmd.Flags().GetString("envtag")
-
-		envtagname := ""
-
-		if envname != "" {
-			envtagname += envname
-		}
-		if envtag != "" {
-			envtagname += envtag
-		}
-		if envtagname != "" {
-			envtagname += "-"
-		}
-		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
-		os.Setenv("PREFIX", envtagname)
-
-		dname := os.TempDir() + os.Getenv("PREFIX")
-
-		RemoveContents(dname)
-		createDirectory(dname)
-
-		fileInfo, err := os.Stat(path)
-		if err != nil {
-			printError("Loading file folder, cause: " + err.Error())
+		if err := methods.PopulateEnvironment(env, path, envname, envtag); err != nil {
 			return err
 		}
-		if env == "" {
-			ret_env, err := generateTempFile(dname, "configurations", configurations)
-			if err != nil {
-				return err
-			}
-			env = ret_env
-		}
-
-		if err := godotenv.Overload(env); err != nil {
-			printError("Loading env variables from " + env + " cause: " + err.Error())
-			return err
-		}
-		freePortOk := false
-		free_port, err := GetFreePort()
-		if err != nil {
-			return err
-		}
-		for freePortOk {
-			if free_port != 0 {
-				freePortOk = true
-			} else {
-				printError("Free port is not available, cause" + err.Error())
-				free_port, err = GetFreePort()
-				if err != nil {
-					return err
-				}
-			}
-		}
-		free_port_string := strconv.Itoa(free_port)
-		if err := setupIPs(); err != nil {
-			printError("Error on setting the IPs " + err.Error())
-			return err
-		}
-		if fileInfo.IsDir() {
-			command := exec.Command("docker",
-				"run",
-				"-idt",
-				"--name",
-				"tmc",
-				"-p",
-				free_port_string+":80",
-				"-v",
-				strings.Trim(path, " ")+":/usr/share/nginx/html",
-				"nginx")
-			command.Stdout = os.Stdout
-			command.Stderr = os.Stderr
-			if err := command.Run(); err != nil {
-				printError("Creating metadata-cache container, cause " + err.Error())
-				return err
-			}
-
-			filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-				if err != nil {
-					printError("Filepath error " + err.Error())
-					return err
-				}
-				if strings.HasSuffix(info.Name(), ".ttl") {
-					printTask("Ingestion file into database: " + info.Name())
-					posturl := "http://" + os.Getenv("LOCAL_IP") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ingestor"
-					r, err := http.NewRequest("POST", posturl, nil)
-					if err != nil {
-						printError("Ingesting file into database, cause " + err.Error())
-						return err
-					}
-					r.Header.Add("accept", "*/*")
-					r.Header.Add("path", "http://"+os.Getenv("LOCAL_IP")+":"+free_port_string+"/"+info.Name())
-					r.Header.Add("securityCode", "changeme")
-					r.Header.Add("type", "single")
-					r.Header.Add("model", "EPOS-DCAT-AP-V1")
-
-					client := &http.Client{}
-					res, err := client.Do(r)
-					if err != nil {
-						printError("Ingestion failed, cause " + err.Error())
-						return err
-					}
-					defer res.Body.Close()
-				}
-				return nil
-			})
-			command = exec.Command("docker",
-				"rm",
-				"-f",
-				"tmc")
-			command.Stdout = os.Stdout
-			command.Stderr = os.Stderr
-			if err := command.Run(); err != nil {
-				printError("Deleting metadata-cache container, cause " + err.Error())
-				return err
-			}
-		} else {
-			printError("You need to define a folder!")
-			return err
-		}
-		command := exec.Command("docker",
-			"exec",
-			"redis-server",
-			"redis-cli",
-			"FLUSHALL")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
-			printError("Flushing redis container, cause " + err.Error())
-			return err
-		}
-		print_urls()
 		return nil
 	},
-}
-
-func GetFreePort() (int, error) {
-	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
-	if err != nil {
-		printError("Resolve TCPAddr, cause " + err.Error())
-		return 0, err
-	}
-
-	l, err := net.ListenTCP("tcp", addr)
-	if err != nil {
-		printError("Listening TCPAddr, cause " + err.Error())
-		return 0, err
-	}
-	defer l.Close()
-	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
 func init() {

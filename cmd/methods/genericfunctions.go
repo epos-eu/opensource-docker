@@ -16,7 +16,7 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 //file: ./cmd/functions.go
-package cmd
+package methods
 
 import (
 	"context"
@@ -81,41 +81,41 @@ type Response struct {
 	} `json:"results"`
 }
 
-func overridePorts(update string) error {
+func OverridePorts(update string) error {
 
 	if update == "true" {
-		printNotification("No ports check needed, update=true")
+		PrintNotification("No ports check needed, update=true")
 		return nil
 	} else {
 		ports := [2]string{"API_PORT", "DATA_PORTAL_PORT"}
 
 		for i := 0; i < len(ports); i++ {
-			printNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
-			isPortAvailable, err := isPortAvailable(os.Getenv(ports[i]))
+			PrintNotification("Checking availability of " + ports[i] + " " + os.Getenv(ports[i]))
+			isPortAvailable, err := IsPortAvailable(os.Getenv(ports[i]))
 			if err != nil {
-				printError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
+				PrintError("Problem on retrieving the availability for the port for " + ports[i] + " error: " + err.Error())
 				return err
 			}
 			if isPortAvailable {
-				printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+				PrintNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
 			} else {
-				port, err := getAvailablePort()
+				port, err := GetAvailablePort()
 				if err != nil {
-					printError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
+					PrintError("Problem on assigning a free port for " + ports[i] + " error: " + err.Error())
 					return err
 				}
 				os.Setenv(ports[i], port)
-				printNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
+				PrintNotification("Port " + ports[i] + " " + os.Getenv(ports[i]) + " available")
 			}
 		}
 	}
 	return nil
 }
 
-func setupIPs() error {
+func SetupIPs() error {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
-		printError("Dial udp 8.8.8.8:80")
+		PrintError("Dial udp 8.8.8.8:80")
 
 	}
 	defer conn.Close()
@@ -136,7 +136,7 @@ func setupIPs() error {
 	return nil
 }
 
-func setupProvidedIPs(externalip string) error {
+func SetupProvidedIPs(externalip string) error {
 	os.Setenv("API_HOST", "http://"+externalip+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"/api")
 	os.Setenv("EXECUTE_HOST", "http://"+externalip+":"+os.Getenv("API_PORT"))
 	os.Setenv("HOST", "http://"+externalip+":"+os.Getenv("DATA_PORTAL_PORT"))
@@ -144,7 +144,7 @@ func setupProvidedIPs(externalip string) error {
 	return nil
 }
 
-func print_urls() {
+func PrintUrls() {
 
 	fmt.Println(string(colorCyan), `Open Source Docker deploy
 
@@ -169,49 +169,49 @@ func print_urls() {
 	fmt.Println(t.Render())
 }
 
-func printError(message string) {
+func PrintError(message string) {
 	fmt.Println(string(colorRed), "[ERROR] "+message, string(colorReset))
 }
-func printTask(message string) {
+func PrintTask(message string) {
 	fmt.Println(string(colorGreen), "[TASK] "+message, string(colorReset))
 }
-func printWait(message string) {
+func PrintWait(message string) {
 	fmt.Println(string(colorYellow), "[WAITING] "+message, string(colorReset))
 }
-func printNotification(message string) {
+func PrintNotification(message string) {
 	fmt.Println(string(colorPurple), "[NOTIFICATION] "+message, string(colorReset))
 }
-func printNewVersionAvailable(message string) {
+func PrintNewVersionAvailable(message string) {
 	fmt.Println(string(colorYellow), "[NEW VERSION AVAILABLE] "+message, string(colorReset))
 }
 
-func generateTempFile(dname string, filetype string, text []byte) (string, error) {
+func GenerateTempFile(dname string, filetype string, text []byte) (string, error) {
 
 	tmpFile, err := ioutil.TempFile(dname, filetype)
 	if err != nil {
-		printError("Could not create temporary file, cause " + err.Error() + " error: " + err.Error())
+		PrintError("Could not create temporary file, cause " + err.Error() + " error: " + err.Error())
 		return "", err
 	}
 	defer tmpFile.Close()
 	name := tmpFile.Name()
 	if _, err = tmpFile.Write(text); err != nil {
-		printError("Unable to write to temporary file, cause " + err.Error() + " error: " + err.Error())
+		PrintError("Unable to write to temporary file, cause " + err.Error() + " error: " + err.Error())
 		return "", err
 	}
-	printNotification("File " + name + " created successfully")
+	PrintNotification("File " + name + " created successfully")
 
 	return name, nil
 }
 
-func createDirectory(dir string) error {
+func CreateDirectory(dir string) error {
 	if _, err := os.Stat(os.TempDir() + os.Getenv("PREFIX")); os.IsNotExist(err) {
 		err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0755)
 		if err != nil {
-			printError("Could not create temporary folder, cause " + err.Error() + " error: " + err.Error())
+			PrintError("Could not create temporary folder, cause " + err.Error() + " error: " + err.Error())
 		}
-		printTask("Directory" + dir + " created successfully")
+		PrintTask("Directory" + dir + " created successfully")
 	} else {
-		printNotification("Directory " + dir + " already exists, using it")
+		PrintNotification("Directory " + dir + " already exists, using it")
 	}
 	return nil
 }
@@ -234,40 +234,40 @@ func RemoveContents(dir string) error {
 			}
 		}
 	} else {
-		printNotification("Directory " + dir + " already exists, using it")
+		PrintNotification("Directory " + dir + " already exists, using it")
 	}
 	return nil
 }
 
-func generateFile(text []byte, filePath string) error {
+func GenerateFile(text []byte, filePath string) error {
 	err := ioutil.WriteFile(filePath, text, 0777)
 	if err != nil {
-		printError("Could not create file, cause " + err.Error())
+		PrintError("Could not create file, cause " + err.Error())
 		return err
 	}
 	return nil
 }
 
-func getLastTag() error {
+func GetLastTag() error {
 	client := github.NewClient(nil)
 	tags, _, err := client.Repositories.ListTags(context.Background(), "epos-eu", "opensource-docker", nil)
 	if err != nil {
-		printError("Could not retrieve tags of the repository, cause " + err.Error())
+		PrintError("Could not retrieve tags of the repository, cause " + err.Error())
 		return err
 	}
 	if len(tags) > 0 {
 		latestTag := tags[0]
-		currentVersion := getVersion()
+		currentVersion := GetVersion()
 		v1, _ := version.NewVersion(currentVersion)
 		v2, _ := version.NewVersion(latestTag.GetName())
 		if v1.LessThan(v2) {
-			printNewVersionAvailable(v1.String() + " ---> " + v2.String())
+			PrintNewVersionAvailable(v1.String() + " ---> " + v2.String())
 		}
 	}
 	return nil
 }
 
-func printSetup(env string, dockercomposefile string) {
+func PrintSetup(env string, dockercomposefile string) {
 
 	t := table.NewWriter()
 	t.SetTitle("DEPLOY CONFIGURATION")
@@ -287,7 +287,7 @@ func printSetup(env string, dockercomposefile string) {
 
 }
 
-func checkImagesUpdate() error {
+func CheckImagesUpdate() error {
 	t := table.NewWriter()
 	t.SetTitle("Docker Images updated")
 	t.AppendHeader(table.Row{"Default Image", "New Image"})
@@ -295,7 +295,7 @@ func checkImagesUpdate() error {
 		splitted := strings.Split(env, "=")
 		if strings.HasSuffix(splitted[0], "_IMAGE") && splitted[0] != "MESSAGE_BUS_IMAGE" && splitted[0] != "REDIS_IMAGE" {
 			imageRepositoryName := strings.Split(splitted[1], ":")
-			latestImageTag, err := getLastDockerImageTag(imageRepositoryName[0])
+			latestImageTag, err := GetLastDockerImageTag(imageRepositoryName[0])
 			if err != nil {
 				return err
 			}
@@ -310,12 +310,12 @@ func checkImagesUpdate() error {
 	return nil
 }
 
-func getLastDockerImageTag(repo string) (string, error) {
+func GetLastDockerImageTag(repo string) (string, error) {
 	response := Response{}
 	namespace := "epos"
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/" + namespace + "/" + repo + "/tags?page_size=2")
 	if err != nil {
-		printError("Can't retrieve tags from dockerhub, error: " + err.Error())
+		PrintError("Can't retrieve tags from dockerhub, error: " + err.Error())
 		return "", err
 	}
 	json.NewDecoder(resp.Body).Decode(&response)
@@ -323,7 +323,7 @@ func getLastDockerImageTag(repo string) (string, error) {
 	return response.Results[1].Name, nil
 }
 
-func isPortAvailable(port string) (bool, error) {
+func IsPortAvailable(port string) (bool, error) {
 	portInt, err := strconv.Atoi(port)
 	if err != nil || portInt < 1 || portInt > 65535 {
 		return false, err
@@ -336,7 +336,7 @@ func isPortAvailable(port string) (bool, error) {
 	return false, nil
 }
 
-func getAvailablePort() (string, error) {
+func GetAvailablePort() (string, error) {
 	const maxAttempts = 10
 	for i := 0; i < maxAttempts; i++ {
 		ln, err := net.Listen("tcp", ":0")
@@ -352,6 +352,6 @@ func getAvailablePort() (string, error) {
 	return "", fmt.Errorf("could not find an available port")
 }
 
-func getVersion() string {
-	return "1.0.9"
+func GetVersion() string {
+	return "1.1.0"
 }

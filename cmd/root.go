@@ -21,51 +21,35 @@ package cmd
 import (
 	_ "embed"
 
+	"github.com/epos-eu/opensource-docker/cmd/methods"
 	"github.com/spf13/cobra"
-)
-
-var (
-
-	//go:embed "docker-compose/docker-compose.yaml"
-	dockercompose []byte
-
-	//go:embed "configurations/env.env"
-	configurations []byte
 )
 
 var rootCmd = &cobra.Command{
 	Use:     "epos-docker-cli",
 	Short:   "EPOS Open Source CLI installer",
-	Version: getVersion(),
+	Version: methods.GetVersion(),
 	Long:    `EPOS Open Source CLI installer to deploy the EPOS System using docker-compose`,
 }
 
-func GetConfigurationsEmbed() []byte {
-	return configurations
-}
-
-func GetDockerComposeEmbed() []byte {
-	return dockercompose
-}
-
 func ExecuteStandAlone() error {
-	getLastTag()
+	methods.GetLastTag()
 	err := rootCmd.Execute()
 	if err != nil {
-		printError("Error on executing rootCMD, cause: " + err.Error())
+		methods.PrintError("Error on executing rootCMD, cause: " + err.Error())
 		return err
 	}
 	return nil
 }
 
 func Execute(args []string) error {
-	getLastTag()
+	methods.GetLastTag()
 	if args != nil {
 		rootCmd.SetArgs(args)
 	}
 	err := rootCmd.Execute()
 	if err != nil {
-		printError("Error on executing rootCMD, cause: " + err.Error())
+		methods.PrintError("Error on executing rootCMD, cause: " + err.Error())
 		return err
 	}
 	return nil

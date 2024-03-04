@@ -19,12 +19,7 @@
 package cmd
 
 import (
-	"os"
-	"os/exec"
-	"regexp"
-	"time"
-
-	"github.com/joho/godotenv"
+	"github.com/epos-eu/opensource-docker/cmd/methods"
 	"github.com/spf13/cobra"
 )
 
@@ -41,133 +36,9 @@ var deployCmd = &cobra.Command{
 		envname, _ := cmd.Flags().GetString("envname")
 		envtag, _ := cmd.Flags().GetString("envtag")
 
-		if update != "true" && update != "false" {
-			update = "false"
-		}
-
-		envtagname := ""
-
-		if envname != "" {
-			envtagname += envname
-		}
-		if envtag != "" {
-			envtagname += envtag
-		}
-		if envtagname != "" {
-			envtagname += "-"
-		}
-		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
-		os.Setenv("PREFIX", envtagname)
-
-		dname := os.TempDir() + os.Getenv("PREFIX")
-
-		if err := RemoveContents(dname); err != nil {
-			printError("Error on removing the content from directory " + err.Error())
+		if err := methods.CreateEnvironment(env, dockercomposefile, externalip, envname, envtag, update, autoupdate); err != nil {
 			return err
 		}
-		if err := createDirectory(dname); err != nil {
-			printError("Error on creating the directory " + err.Error())
-			return err
-		}
-
-		isDefaultEnv := false
-		if env == "" {
-			ret_env, err := generateTempFile(dname, "configurations", configurations)
-			if err != nil {
-				return err
-			}
-			env = ret_env
-			isDefaultEnv = true
-		}
-
-		if dockercomposefile == "" {
-			ret_dockercomposefile, err := generateTempFile(dname, "dockercompose", dockercompose)
-			if err != nil {
-				return err
-			}
-			dockercomposefile = ret_dockercomposefile
-		}
-		if err := godotenv.Overload(env); err != nil {
-			printError("Loading env variables from " + env + " cause: " + err.Error())
-			return err
-		}
-
-		if autoupdate == "true" || isDefaultEnv {
-			if err := checkImagesUpdate(); err != nil {
-				printError("Error on updating the docker container images " + err.Error())
-				return err
-			}
-		}
-		if err := overridePorts(update); err != nil {
-			printError("Error during overriding ports if update=true " + err.Error())
-			return err
-		}
-
-		if externalip == "" {
-			if err := setupIPs(); err != nil {
-				printError("Error on setting the IPs " + err.Error())
-				return err
-			}
-		} else {
-			if err := setupProvidedIPs(externalip); err != nil {
-				printError("Error on setting the IPs using the provided IP " + err.Error())
-				return err
-			}
-		}
-
-		printSetup(env, dockercomposefile)
-
-		printTask("Installing rabbitmq container on the machine")
-
-		command := exec.Command("docker-compose",
-			"-f",
-			dockercomposefile,
-			"--env-file="+env,
-			"up",
-			"-d",
-			"--build",
-			"rabbitmq")
-
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-
-		if err := command.Run(); err != nil {
-			printError("Creation of rabbitmq container failed, cause: " + err.Error())
-			return err
-		}
-		time.Sleep(15 * time.Second)
-		printTask("Installing all remaining containers on the machine")
-		command = exec.Command("docker-compose",
-			"-f",
-			dockercomposefile,
-			"--env-file="+env,
-			"up",
-			"-d",
-			"--build")
-
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
-			printError("Creation of container failed, cause: " + err.Error())
-			return err
-		}
-		printWait("Waiting for the containers to be up and running...")
-		time.Sleep(40 * time.Second)
-		printTask("Restarting gateway")
-		command = exec.Command("docker-compose",
-			"-f",
-			dockercomposefile,
-			"--env-file="+env,
-			"restart",
-			"gateway")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
-			printError("Creation of container failed, cause: " + err.Error())
-			return err
-		}
-		time.Sleep(5 * time.Second)
-		print_urls()
 		return nil
 	},
 }

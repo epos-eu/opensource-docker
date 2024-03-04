@@ -21,6 +21,7 @@ package cmd
 import (
 	_ "embed"
 
+	"github.com/epos-eu/opensource-docker/cmd/methods"
 	"github.com/spf13/cobra"
 )
 
@@ -33,19 +34,8 @@ var exportCmd = &cobra.Command{
 		file, _ := cmd.Flags().GetString("file")
 		output, _ := cmd.Flags().GetString("output")
 
-		switch file {
-		case "env":
-			if err := generateFile(configurations, output+"/configurations.env"); err != nil {
-				printError("Error on generating file ENV, cause: " + err.Error())
-				return err
-			}
-		case "compose":
-			if err := generateFile(dockercompose, output+"/docker-compose.yaml"); err != nil {
-				printError("Error on generating file DOCKER-COMPOSE, cause: " + err.Error())
-				return err
-			}
-		default:
-			printError("Invalid option, available options: [env, compose]")
+		if err := methods.ExportVariablesEnvironment(file, output); err != nil {
+			return err
 		}
 		return nil
 	},

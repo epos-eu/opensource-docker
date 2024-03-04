@@ -20,11 +20,8 @@ package cmd
 
 import (
 	_ "embed"
-	"os"
-	"os/exec"
-	"regexp"
 
-	"github.com/joho/godotenv"
+	"github.com/epos-eu/opensource-docker/cmd/methods"
 	"github.com/spf13/cobra"
 )
 
@@ -37,70 +34,8 @@ var deleteCmd = &cobra.Command{
 		dockercomposefile, _ := cmd.Flags().GetString("dockercompose")
 		envname, _ := cmd.Flags().GetString("envname")
 		envtag, _ := cmd.Flags().GetString("envtag")
-		isDefaultEnv := false
 
-		envtagname := ""
-
-		if envname != "" {
-			envtagname += envname
-		}
-		if envtag != "" {
-			envtagname += envtag
-		}
-		if envtagname != "" {
-			envtagname += "-"
-		}
-		envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
-
-		os.Setenv("PREFIX", envtagname)
-
-		dname := os.TempDir() + os.Getenv("PREFIX")
-
-		if err := RemoveContents(dname); err != nil {
-			printError("Error on removing the content from directory " + err.Error())
-			return err
-		}
-		if err := createDirectory(dname); err != nil {
-			printError("Error on creating the directory " + err.Error())
-			return err
-		}
-
-		if env == "" {
-			ret_env, err := generateTempFile(dname, "configurations", configurations)
-			if err != nil {
-				return err
-			}
-			env = ret_env
-			isDefaultEnv = true
-		}
-
-		if dockercomposefile == "" {
-			ret_dockercomposefile, err := generateTempFile(dname, "dockercompose", dockercompose)
-			if err != nil {
-				return err
-			}
-			dockercomposefile = ret_dockercomposefile
-		}
-		if err := godotenv.Overload(env); err != nil {
-			printError("Error loading env variables from " + env + " cause: " + err.Error())
-			return err
-		}
-		if isDefaultEnv {
-			checkImagesUpdate()
-		}
-
-		setupIPs()
-
-		printSetup(env, dockercomposefile)
-		command := exec.Command("docker-compose",
-			"-f",
-			dockercomposefile,
-			"down",
-			"-v")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
-			printError("Error deleting environment, cause: " + err.Error())
+		if err := methods.DeleteEnvironment(env, dockercomposefile, envname, envtag); err != nil {
 			return err
 		}
 		return nil
