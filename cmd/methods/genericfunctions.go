@@ -310,7 +310,3 @@ func GetAvailablePort() (string, error) {
 	}
 	return "", fmt.Errorf("could not find an available port")
 }
-
-func GetVersion() string {
-	return "1.1.2"
-}
