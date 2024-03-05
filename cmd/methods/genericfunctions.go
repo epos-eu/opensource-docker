@@ -145,6 +145,9 @@ func SetupProvidedIPs(externalip string) error {
 
 func PrintUrls() {
 
+	os.Setenv("PORTAL_URL_READY", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("DATA_PORTAL_PORT"))
+	os.Setenv("API_URL_READY", "http://"+os.Getenv("API_HOST_ENV")+":"+os.Getenv("API_PORT")+os.Getenv("DEPLOY_PATH")+"api/v1/ui/")
+
 	fmt.Println(string(colorCyan), `Open Source Docker deploy
 
      &&&&&&&&&&&&&&&&&& *&&&&&&&%&&&%               *****************               &&&&&&/         
@@ -162,8 +165,8 @@ func PrintUrls() {
     Copyright (C) 2023  EPOS ERIC`, string(colorReset))
 	t := table.NewWriter()
 	t.SetTitle("EPOS ACCESS POINTS")
-	t.AppendRow(table.Row{"EPOS Data Portal", "http://" + os.Getenv("API_HOST_ENV") + ":" + os.Getenv("DATA_PORTAL_PORT")})
-	t.AppendRow(table.Row{"EPOS API Gateway", "http://" + os.Getenv("API_HOST_ENV") + ":" + os.Getenv("API_PORT") + os.Getenv("DEPLOY_PATH") + os.Getenv("API_PATH") + "/ui/"})
+	t.AppendRow(table.Row{"EPOS Data Portal", os.Getenv("PORTAL_URL_READY")})
+	t.AppendRow(table.Row{"EPOS API Gateway", os.Getenv("API_URL_READY")})
 	t.SetStyle(table.StyleColoredBlackOnGreenWhite)
 	fmt.Println(t.Render())
 }
