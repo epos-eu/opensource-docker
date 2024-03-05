@@ -83,15 +83,13 @@ func DeleteEnvironment(env string, dockercomposefile string, envname string, env
 	SetupIPs()
 
 	PrintSetup(env, dockercomposefile)
-	command := exec.Command("docker-compose",
+
+	if err := ExecuteCommand(exec.Command("docker-compose",
 		"-f",
 		dockercomposefile,
 		"down",
-		"-v")
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	if err := command.Run(); err != nil {
-		PrintError("Error deleting environment, cause: " + err.Error())
+		"-v")); err != nil {
+		PrintError("Creation of container failed, cause: " + err.Error())
 		return err
 	}
 	return nil

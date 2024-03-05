@@ -1,4 +1,4 @@
-// file: ./cmd/methods/createfunctions.go
+// file: ./cmd/methods/embeds.go
 package methods
 
 import (

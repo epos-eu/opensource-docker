@@ -92,7 +92,8 @@ func PopulateEnvironment(env string, path string, envname string, envtag string)
 		return err
 	}
 	if fileInfo.IsDir() {
-		command := exec.Command("docker",
+
+		if err := ExecuteCommand(exec.Command("docker",
 			"run",
 			"-idt",
 			"--name",
@@ -101,10 +102,7 @@ func PopulateEnvironment(env string, path string, envname string, envtag string)
 			free_port_string+":80",
 			"-v",
 			strings.Trim(path, " ")+":/usr/share/nginx/html",
-			"nginx")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
+			"nginx")); err != nil {
 			PrintError("Creating metadata-cache container, cause " + err.Error())
 			return err
 		}
@@ -138,29 +136,16 @@ func PopulateEnvironment(env string, path string, envname string, envtag string)
 			}
 			return nil
 		})
-		command = exec.Command("docker",
+
+		if err := ExecuteCommand(exec.Command("docker",
 			"rm",
 			"-f",
-			"tmc")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-		if err := command.Run(); err != nil {
+			"tmc")); err != nil {
 			PrintError("Deleting metadata-cache container, cause " + err.Error())
 			return err
 		}
 	} else {
 		PrintError("You need to define a folder!")
-		return err
-	}
-	command := exec.Command("docker",
-		"exec",
-		"redis-server",
-		"redis-cli",
-		"FLUSHALL")
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	if err := command.Run(); err != nil {
-		PrintError("Flushing redis container, cause " + err.Error())
 		return err
 	}
 	PrintUrls()

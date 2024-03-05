@@ -108,53 +108,45 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 
 	PrintTask("Installing rabbitmq container on the machine")
 
-	command := exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command("docker-compose",
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
 		"up",
 		"-d",
 		"--build",
-		"rabbitmq")
-
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-
-	if err := command.Run(); err != nil {
+		"rabbitmq")); err != nil {
 		PrintError("Creation of rabbitmq container failed, cause: " + err.Error())
 		return err
 	}
+
 	time.Sleep(15 * time.Second)
 	PrintTask("Installing all remaining containers on the machine")
-	command = exec.Command("docker-compose",
+
+	if err := ExecuteCommand(exec.Command("docker-compose",
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
 		"up",
 		"-d",
-		"--build")
-
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	if err := command.Run(); err != nil {
+		"--build")); err != nil {
 		PrintError("Creation of container failed, cause: " + err.Error())
 		return err
 	}
+
 	PrintWait("Waiting for the containers to be up and running...")
 	time.Sleep(40 * time.Second)
 	PrintTask("Restarting gateway")
-	command = exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command("docker-compose",
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
 		"restart",
-		"gateway")
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	if err := command.Run(); err != nil {
+		"gateway")); err != nil {
 		PrintError("Creation of container failed, cause: " + err.Error())
 		return err
 	}
+
 	time.Sleep(5 * time.Second)
 	PrintUrls()
 	return nil
