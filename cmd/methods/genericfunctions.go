@@ -22,7 +22,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -187,7 +186,7 @@ func PrintNewVersionAvailable(message string) {
 
 func GenerateTempFile(dname string, filetype string, text []byte) (string, error) {
 
-	tmpFile, err := ioutil.TempFile(dname, filetype)
+	tmpFile, err := os.CreateTemp(dname, filetype)
 	if err != nil {
 		PrintError("Could not create temporary file, cause " + err.Error() + " error: " + err.Error())
 		return "", err
@@ -205,7 +204,7 @@ func GenerateTempFile(dname string, filetype string, text []byte) (string, error
 
 func CreateDirectory(dir string) error {
 	if _, err := os.Stat(os.TempDir() + os.Getenv("PREFIX")); os.IsNotExist(err) {
-		err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0755)
+		err := os.Mkdir(os.TempDir()+os.Getenv("PREFIX"), 0777)
 		if err != nil {
 			PrintError("Could not create temporary folder, cause " + err.Error() + " error: " + err.Error())
 		}
@@ -240,7 +239,7 @@ func RemoveContents(dir string) error {
 }
 
 func GenerateFile(text []byte, filePath string) error {
-	err := ioutil.WriteFile(filePath, text, 0777)
+	err := os.WriteFile(filePath, text, 0777)
 	if err != nil {
 		PrintError("Could not create file, cause " + err.Error())
 		return err
