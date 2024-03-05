@@ -49,11 +49,14 @@ services:
       - SECURITY_KEY=${SECURITY_KEY}
       - AAI_SERVICE_ENDPOINT=${AAI_SERVICE_ENDPOINT}
     depends_on:
-      - rabbitmq
-      - resources
-      - backoffice
-      - ingestor
-      - externalaccess
+      resources:
+        condition: service_healthy
+      backoffice:
+        condition: service_healthy
+      ingestor:
+        condition: service_healthy
+      externalaccess:
+        condition: service_healthy
   rabbitmq:
     image: "${MESSAGE_BUS_IMAGE}"
     container_name: ${PREFIX}rabbitmq
@@ -63,6 +66,11 @@ services:
       - RABBITMQ_DEFAULT_PASS=${BROKER_USERNAME}
       - RABBITMQ_DEFAULT_USER=${BROKER_PASSWORD}
       - RABBITMQ_DEFAULT_VHOST=${BROKER_VHOST}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 10
     networks:
       - epos_network
   resources:
@@ -93,13 +101,13 @@ services:
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/resources-service/v1/actuator/health"]
-      interval: 1m30s
+      test: "curl --fail --silent http://localhost:8080/api/resources-service/v1/actuator/health | grep UP || exit 1"
+      interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 10
     depends_on:
-      - rabbitmq
+      metadatacatalogue:
+        condition: service_healthy
   backoffice:
     image: "${DOCKER_REGISTRY}/${BACKOFFICE_SERVICE_IMAGE}"
     container_name: ${PREFIX}backoffice-service
@@ -116,13 +124,13 @@ services:
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/backoffice-service/v1/actuator/health"]
-      interval: 1m30s
+      test: "curl --fail --silent http://localhost:8080/api/backoffice-service/v1/actuator/health | grep UP || exit 1"
+      interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 10
     depends_on:
-      - rabbitmq
+      metadatacatalogue:
+        condition: service_healthy
   ingestor:
     image: "${DOCKER_REGISTRY}/${INGESTOR_IMAGE}"
     container_name: ${PREFIX}ingestor-service
@@ -144,13 +152,13 @@ services:
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/ingestor-service/v1/actuator/health"]
-      interval: 1m30s
+      test: "curl --fail --silent http://localhost:8080/api/ingestor-service/v1/actuator/health | grep UP || exit 1"
+      interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 10
     depends_on:
-      - rabbitmq
+      metadatacatalogue:
+        condition: service_healthy
   externalaccess:
     image: "${DOCKER_REGISTRY}/${EXTERNAL_ACCESS_IMAGE}"
     container_name: ${PREFIX}external-access-service
@@ -177,13 +185,15 @@ services:
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/external-access-service/v1/actuator/health"]
-      interval: 1m30s
+      test: "curl --fail --silent http://localhost:8080/api/external-access-service/v1/actuator/health | grep UP || exit 1"
+      interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 10
     depends_on:
-      - rabbitmq
+      metadatacatalogue:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   converter:
     image: "${DOCKER_REGISTRY}/${CONVERTER_IMAGE}"
     container_name: ${PREFIX}converter-service
@@ -207,7 +217,8 @@ services:
       - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
       - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
   metadatacatalogue:
     restart: always
     image: "${DOCKER_REGISTRY}/${METADATA_DB_IMAGE}"
@@ -218,8 +229,11 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - psqldata:/var/lib/postgresql
-    depends_on:
-      - rabbitmq
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     networks:
       - epos_network
 volumes:

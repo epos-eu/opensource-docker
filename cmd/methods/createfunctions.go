@@ -114,6 +114,7 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 		"--env-file="+env,
 		"up",
 		"-d",
+		"--wait",
 		"--build",
 		"rabbitmq")); err != nil {
 		PrintError("Creation of rabbitmq container failed, cause: " + err.Error())
@@ -121,6 +122,24 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 	}
 
 	time.Sleep(15 * time.Second)
+
+	PrintTask("Installing metadata catalogue container on the machine")
+
+	if err := ExecuteCommand(exec.Command("docker-compose",
+		"-f",
+		dockercomposefile,
+		"--env-file="+env,
+		"up",
+		"-d",
+		"--wait",
+		"--build",
+		"metadatacatalogue")); err != nil {
+		PrintError("Creation of metadata catalogue container failed, cause: " + err.Error())
+		return err
+	}
+
+	time.Sleep(15 * time.Second)
+
 	PrintTask("Installing all remaining containers on the machine")
 
 	if err := ExecuteCommand(exec.Command("docker-compose",
@@ -129,6 +148,7 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 		"--env-file="+env,
 		"up",
 		"-d",
+		"--wait",
 		"--build")); err != nil {
 		PrintError("Creation of container failed, cause: " + err.Error())
 		return err
