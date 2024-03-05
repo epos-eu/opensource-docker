@@ -48,7 +48,7 @@ func PopulateEnvironment(env string, path string, envname string, envtag string)
 	envtagname = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(envtagname, "-")
 	os.Setenv("PREFIX", envtagname)
 
-	dname := os.TempDir() + os.Getenv("PREFIX")
+	dname := GenerateDirectoryName()
 
 	RemoveContents(dname)
 	CreateDirectory(dname)

@@ -45,7 +45,7 @@ func DeleteEnvironment(env string, dockercomposefile string, envname string, env
 
 	os.Setenv("PREFIX", envtagname)
 
-	dname := os.TempDir() + os.Getenv("PREFIX")
+	dname := GenerateDirectoryName()
 
 	if err := RemoveContents(dname); err != nil {
 		PrintError("Error on removing the content from directory " + err.Error())
