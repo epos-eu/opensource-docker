@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+func GenerateDirectoryName() string {
+	dname := os.TempDir() + "/" + os.Getenv("PREFIX")
+	return dname
+}
+
 func GenerateTempFile(dname string, filetype string, text []byte) (string, error) {
 
 	tmpFile, err := os.CreateTemp(dname, filetype)
