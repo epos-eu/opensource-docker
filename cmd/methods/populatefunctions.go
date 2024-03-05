@@ -144,6 +144,13 @@ func PopulateEnvironment(env string, path string, envname string, envtag string)
 			PrintError("Deleting metadata-cache container, cause " + err.Error())
 			return err
 		}
+
+		if err := ExecuteCommand(exec.Command("docker",
+			"restart",
+			envtagname+"converter-service")); err != nil {
+			PrintError("Error restarting converter service, cause " + err.Error())
+			return err
+		}
 	} else {
 		PrintError("You need to define a folder!")
 		return err
