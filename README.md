@@ -48,7 +48,8 @@ Available Commands:
   populate    Populate the existing environment with metadata information
 
 Flags:
-  -h, --help   help for [command]
+  -h, --help      help for opensource-docker
+  -v, --version   version for opensource-docker
 
 Use "opensource-docker [command] --help" for more information about a command.
 ```
@@ -59,14 +60,17 @@ Use "opensource-docker [command] --help" for more information about a command.
 Deploy an enviroment with .env set up on docker
 
 Usage:
-  epos-docker-cli deploy [flags]
+  opensource-docker deploy [flags]
 
 Flags:
       --autoupdate string      Auto update the images versions (true|false)
       --dockercompose string   Docker compose file, use default if not provided
       --env string             Environment variable file, use default if not provided
+      --envname string         Set name of the environment
+      --envtag string          Set tag of the environment
       --externalip string      IP address used to expose the services, use automatically generated if not provided
   -h, --help                   help for deploy
+      --update string          Update of an existing deployment (true|false), default false
 ```
 
 ## Delete the existing environment
@@ -80,6 +84,8 @@ Usage:
 Flags:
       --dockercompose string   Docker compose file, use default if not provided
       --env string             Environment variable file, use default if not provided
+      --envname string         Set name of the environment
+      --envtag string          Set tag of the environment
   -h, --help                   help for delete
 ```
 
@@ -96,9 +102,11 @@ Usage:
   opensource-docker populate [flags]
 
 Flags:
-      --env string      Environment variable file
-      --folder string   Folder where ttl files are located
-  -h, --help            help for populate
+      --env string       Environment variable file
+      --envname string   Set name of the environment
+      --envtag string    Set tag of the environment
+      --folder string    Fullpath folder where ttl files are located
+  -h, --help             help for populate
 ```
 
 ### Manual option
@@ -116,7 +124,7 @@ Usage:
 Flags:
       --file string     File to export, available options: [env, compose]
   -h, --help            help for export
-      --output string   Output folder
+      --output string   Full path utput folder
 ```
 
 
@@ -138,8 +146,8 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | Name | Standard Value | Description |
 |--|--|--|
 | API_HOST_ENV | ${API_HOST_ENV} | API Host Environment IP provided by user, if not set is generated automatically using machine IP |
-| API_HOST | ${API_HOST} | API Host IP, if not set is generated automatically using machine IP |
-| EXECUTE_HOST | ${API_HOST} | Internal variable to setup redirections for the external access service, if not set is generated automatically using machine IP |
+| API_HOST | ${API_HOST_ENV} | API Host IP, if not set is generated automatically using machine IP |
+| EXECUTE_HOST | ${API_HOST_ENV} | Internal variable to setup redirections for the external access service, if not set is generated automatically using machine IP |
 | DEPLOY_PATH | / | Context path of the environment|
 | BASE_CONTEXT | empty value | Context path name of the environment (similar to DEPLOY_PATH but without the initial /) |
 | API_PATH | /api/v1 | API GATEWAY access path|
@@ -163,7 +171,6 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | POSTGRES_USER | postgres | Database user |
 | POSTGRESQL_PASSWORD | changeme | Database password |
 | POSTGRES_DB | cerif | Database name |
-| POSTGRESQL_CONNECTION_STRING | jdbc:postgresql:///${POSTGRESQL_HOST}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD} | Database connection string based on previous configurations |
 | PERSISTENCE_NAME | EPOSDataModel | Persistence Name of scientific metadata |
 | PERSISTENCE_NAME_PROCESSING | EPOSProcessing | Persistence Name of processing metadata |
 
@@ -173,9 +180,9 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 |--|--|--|
 | NUM_OF_PUBLISHERS | 10 | Number of publishers on rabbitmq |
 | NUM_OF_CONSUMERS | 10 | Number of consumers on rabbitmq |
-| CONNECTION_POOL_INIT_SIZE | 1 | Initial number of connections to database |
-| CONNECTION_POOL_MIN_SIZE | 1 | Minimum number of connections to database |
-| CONNECTION_POOL_MAX_SIZE | 20 | Maximum number of connections to database |
+| CONNECTION_POOL_INIT_SIZE | 5 | Initial number of connections to database |
+| CONNECTION_POOL_MIN_SIZE | 5 | Minimum number of connections to database |
+| CONNECTION_POOL_MAX_SIZE | 15 | Maximum number of connections to database |
 
 ### Monitoring Service configuration
 
@@ -186,7 +193,7 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | MONITORING_USER | changeme | Monitoring service username |
 | MONITORING_PWD | changeme | Monitoring service password |
 
-### Monitoring Service configuration
+### Docker Registry configuration
 
 | Name | Standard Value | Description |
 |--|--|--|
@@ -210,23 +217,21 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | FACETS_DEFAULT | true | |
 | FACETS_TYPE_DEFAULT | categories | |
 | REDIS_SERVER | redis-server | |
-| INGESTOR_HASH | 3F58A1895982CC81A2E5CEDA7DD9AC7009DF9998 | |
+| INGESTOR_HASH | FA9BEB99E4029AD5A6615399E7BBAE21356086B3 | "changeme" Security key|
 
 ### Docker Images for Open Source 
 
 | Variable name | Image name | Default Tag |
 |--|--|--|
 | MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
-| REDIS_IMAGE | redis | 7.0.11 |
-| DATAPORTAL_IMAGE | data-portal | 1.0.0 |
-| GATEWAY_IMAGE | epos-api-gateway | 1.3.4 |
-| RESOURCES_SERVICE_IMAGE | resources-service | 1.4.1 |
-| INGESTOR_IMAGE | ingestor-service | 1.4.4 |
-| EXTERNAL_ACCESS_IMAGE | external-access-service | 1.4.6 |
-| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.3.7 |
-| CONVERTER_IMAGE | converter-service | 1.2.1 |
-| DATA_METADATA_SERVICE_IMAGE | data-metadata-service | 2.7.5 |
-| METADATA_DB_IMAGE | metadata-database-deploy | 2.4.13 |
+| DATAPORTAL_IMAGE | data-portal | 1.0.1 |
+| GATEWAY_IMAGE | epos-api-gateway | 2.0.2 |
+| RESOURCES_SERVICE_IMAGE | resources-service | 2.0.6 |
+| INGESTOR_IMAGE | ingestor-service | 2.0.1 |
+| EXTERNAL_ACCESS_IMAGE | external-access-service | 2.0.1 |
+| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.3.9 |
+| CONVERTER_IMAGE | converter-service | 2.0.0 |
+| METADATA_DB_IMAGE | metadata-database-deploy | 2.4.20 |
 
 ## Maintenance
 
