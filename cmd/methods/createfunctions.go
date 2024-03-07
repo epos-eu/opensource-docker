@@ -19,6 +19,7 @@
 package methods
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -29,9 +30,23 @@ import (
 
 func CreateEnvironment(env string, dockercomposefile string, externalip string, envname string, envtag string, update string, autoupdate string) error {
 
+	out, err := exec.Command("docker", "compose", "version").Output()
+	dockercommand := "docker"
+	composecommand := "compose"
+	if err != nil {
+		PrintNotification("No valid Docker Compose command found, try with docker-compose command")
+		out, err = exec.Command("docker-compose", "version").Output()
+		if err != nil {
+			PrintError("No valid docker and docker-compose installation found")
+			return err
+		}
+		dockercommand = "docker-compose"
+		composecommand = ""
+	}
 	if update != "true" && update != "false" {
 		update = "false"
 	}
+	fmt.Println(string(out))
 
 	envtagname := ""
 
@@ -108,7 +123,8 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 
 	PrintTask("Installing rabbitmq container on the machine")
 
-	if err := ExecuteCommand(exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command(dockercommand,
+		composecommand,
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
@@ -125,7 +141,8 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 
 	PrintTask("Installing metadata catalogue container on the machine")
 
-	if err := ExecuteCommand(exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command(dockercommand,
+		composecommand,
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
@@ -142,7 +159,8 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 
 	PrintTask("Installing all remaining containers on the machine")
 
-	if err := ExecuteCommand(exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command(dockercommand,
+		composecommand,
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
@@ -157,7 +175,8 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 	PrintWait("Waiting for the containers to be up and running...")
 	time.Sleep(40 * time.Second)
 	PrintTask("Restarting gateway")
-	if err := ExecuteCommand(exec.Command("docker-compose",
+	if err := ExecuteCommand(exec.Command(dockercommand,
+		composecommand,
 		"-f",
 		dockercomposefile,
 		"--env-file="+env,
