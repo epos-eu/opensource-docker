@@ -96,7 +96,7 @@ func CreateEnvironment(env string, dockercomposefile string, externalip string, 
 		return err
 	}
 
-	if autoupdate == "true" || isDefaultEnv {
+	if autoupdate == "true" && !isDefaultEnv {
 		if err := CheckImagesUpdate(); err != nil {
 			PrintError("Error on updating the docker container images " + err.Error())
 			return err
