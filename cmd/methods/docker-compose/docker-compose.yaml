@@ -14,8 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.'
 
-version: '3.7'
-
 services:
   dataportal:
     image: "${DOCKER_REGISTRY}/${DATAPORTAL_IMAGE}"
@@ -44,6 +42,7 @@ services:
       - LOAD_EXTERNAL_ACCESS_API=${LOAD_EXTERNAL_ACCESS_API}
       - LOAD_BACKOFFICE_API=${LOAD_BACKOFFICE_API}
       - LOAD_PROCESSING_API=${LOAD_PROCESSING_API}
+      - LOAD_CONVERTER_API=${LOAD_CONVERTER_API}
       - LOAD_SHARING_API=${LOAD_SHARING_API}
       - IS_MONITORING_AUTH=${IS_MONITORING_AUTH}
       - IS_AAI_ENABLED=${IS_AAI_ENABLED}
@@ -195,11 +194,33 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-  converter:
-    image: "${DOCKER_REGISTRY}/${CONVERTER_IMAGE}"
+  converterservice:
+    image: "${DOCKER_REGISTRY}/${CONVERTER_SERVICE_IMAGE}"
     container_name: ${PREFIX}converter-service
     volumes:
-      - converter:/converter
+      - converter:/opt/converter/plugins
+    networks:
+      - epos_network
+    restart: always
+    environment:
+      - BROKER_HOST=${BROKER_HOST}
+      - BROKER_USERNAME=${BROKER_USERNAME}
+      - BROKER_PASSWORD=${BROKER_PASSWORD}
+      - BROKER_VHOST=${BROKER_VHOST}
+      - PERSISTENCE_NAME=${PERSISTENCE_NAME}
+      - POSTGRESQL_CONNECTION_STRING=jdbc:postgresql://${PREFIX}${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRES_DB}?user=${POSTGRES_USER}&password=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST}
+      - POSTGRESQL_DBNAME=${POSTGRES_DB}
+      - POSTGRESQL_USERNAME=${POSTGRES_USER}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      - CONNECTION_POOL_INIT_SIZE=${CONNECTION_POOL_INIT_SIZE}
+      - CONNECTION_POOL_MIN_SIZE=${CONNECTION_POOL_MIN_SIZE}
+      - CONNECTION_POOL_MAX_SIZE=${CONNECTION_POOL_MAX_SIZE}
+  converterroutine:
+    image: "${DOCKER_REGISTRY}/${CONVERTER_ROUTINE_IMAGE}"
+    container_name: ${PREFIX}converter-routine
+    volumes:
+      - converter:/opt/converter/plugins
     networks:
       - epos_network
     restart: always

@@ -219,20 +219,6 @@ http://<your-ip>:<API_PORT><DEPLOY_PATH><API_PATH>
 | REDIS_SERVER | redis-server | |
 | INGESTOR_HASH | FA9BEB99E4029AD5A6615399E7BBAE21356086B3 | "changeme" Security key|
 
-### Docker Images for Open Source 
-
-| Variable name | Image name | Default Tag |
-|--|--|--|
-| MESSAGE_BUS_IMAGE | rabbitmq | 3.11.7-management |
-| DATAPORTAL_IMAGE | data-portal | 1.0.1 |
-| GATEWAY_IMAGE | epos-api-gateway | 2.0.2 |
-| RESOURCES_SERVICE_IMAGE | resources-service | 2.0.6 |
-| INGESTOR_IMAGE | ingestor-service | 2.0.1 |
-| EXTERNAL_ACCESS_IMAGE | external-access-service | 2.0.1 |
-| BACKOFFICE_SERVICE_IMAGE | backoffice-service | 2.3.9 |
-| CONVERTER_IMAGE | converter-service | 2.0.0 |
-| METADATA_DB_IMAGE | metadata-database-deploy | 2.4.20 |
-
 ## Maintenance
 
 We regularly update images used in this stack.
