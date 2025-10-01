@@ -1,6 +1,13 @@
 
 # EPOS Open Source - Docker installer
 
+# ⚠️ Repository Archived
+
+This repository is no longer maintained. Please use the new, actively developed version of the CLI here:
+[https://github.com/epos-eu/epos-opensource](https://github.com/epos-eu/epos-opensource)
+
+---
+
 ## Introduction
 
 EPOS Open Source - Docker installer is part of the EPOS Open Source project for local installation using Docker.
